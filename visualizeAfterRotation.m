@@ -11,9 +11,9 @@ if(~exist('data_n.mat','file'))
             quads=grid2array(strcat([directory '/' files{j,1}]));
             points=quads(:,2:4);
             %Switch axes so indices 1,2,3 correspond with x,y,z
-            temp=points(:,1);
-            points(:,1)=points(:,3);
-            points(:,3)=-temp;
+            %temp=points(:,1);
+            %points(:,1)=points(:,3);
+            %points(:,3)=-temp;
             data_n{n}=points;
             %data=cat(1,data,points);
             n=n+1;

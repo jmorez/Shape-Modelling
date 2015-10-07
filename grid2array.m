@@ -1,6 +1,6 @@
 %Written by Jan Morez, 30/09/2015
 %Universiteit Antwerpen
-function quads=grid2array(file)
+function array=grid2array(file)
 %Output is a M by 14-array with each column representing:
 %[vertex ID] vx vy vz u v pu pv quad1 quad2 quad3 quad4
 f=fopen(file);
@@ -27,8 +27,8 @@ if (f~=-1)
     end
     
     %Now that we know the amount of quads, we can allocate an array.
-    quads=zeros(quads_amount,14);
-    quads(1,:)=data;
+    array=zeros(quads_amount,14);
+    array(1,:)=data;
     
     %Needed for progress report
     reverseStr='';
@@ -36,7 +36,7 @@ if (f~=-1)
     %Read the rest of the quads
     for j=2:quads_amount
         data=sscanf(fgetl(f),'%d %f %f %f %f %f %f %f %d %d %d %d %d %d');
-        quads(j,:)=data;
+        array(j,:)=data;
         
         %Display progress
         if mod(j,round(quads_amount/50))==0
@@ -46,9 +46,15 @@ if (f~=-1)
         end
 
     end
+    
+    %Adjust axes (z-axis is actually -x axis and v.v.)
+    temp=array(:,2);
+    array(:,2)=array(:,4);
+    array(:,4)=-temp;
+    
     disp('Done!')
     fclose(f);
 else
     sprintf('Unable to open file: "%s" \n', file);
-    quads=[];
+    array=[];
 end
