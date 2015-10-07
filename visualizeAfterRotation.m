@@ -1,3 +1,5 @@
+%This needs rewriting to deal with quads, or should just be removed...
+
 directory='grid';
 files=struct2cell(dir(directory))';
 n=1;
@@ -10,12 +12,7 @@ if(~exist('data_n.mat','file'))
         if files{j,4}==0 %Check if we're dealing with a directory or a file.
             quads=grid2array(strcat([directory '/' files{j,1}]));
             points=quads(:,2:4);
-            %Switch axes so indices 1,2,3 correspond with x,y,z
-            %temp=points(:,1);
-            %points(:,1)=points(:,3);
-            %points(:,3)=-temp;
             data_n{n}=points;
-            %data=cat(1,data,points);
             n=n+1;
         end
     end  
