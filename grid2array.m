@@ -2,7 +2,7 @@
 %Universiteit Antwerpen
 function quads=grid2array(file)
 %Output is a M by 14-array with each column representing:
-%ID vx vy vz 
+%[vertex ID] vx vy vz u v pu pv quad1 quad2 quad3 quad4
 f=fopen(file);
 if (f~=-1)
     n=1;
@@ -40,7 +40,7 @@ if (f~=-1)
         
         %Display progress
         if mod(j,round(quads_amount/50))==0
-            msg = sprintf('grid2array: %d of %d read... \n', j,quads_amount);
+            msg = sprintf('grid2array: %d of %d read from file "%s" \n', j,quads_amount,file);
             fprintf([reverseStr, msg]);
             reverseStr = repmat(sprintf('\b'), 1, length(msg));
         end

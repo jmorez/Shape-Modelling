@@ -1,6 +1,8 @@
 directory='grid';
 files=struct2cell(dir(directory))';
 n=1;
+
+%Rotation angle of each view
 theta=pi/4;
 if(~exist('data_n.mat','file'))
     %data=[];
