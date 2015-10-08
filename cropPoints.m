@@ -1,8 +1,7 @@
-function quadData_Cropped=cropPoints(quadData,percentile)
-    %This function will first find a minimum radius that corresponds with 
-    %<percentile> of all points. It will then remove all points outside a 
-    %cylinder with said radius and make sure the face-data is not corrupted due
-    %to the removing of points.
+function quadData_Cropped=cropPoints(quadData,radius)
+    %It will remove all points outside a 
+    %cylinder with given radius and make sure the face-data is not corrupted due
+    %to the removing of points. It still corrupts face-data though :(
     n=length(quadData);
     d=zeros(n,1);
     
@@ -10,10 +9,7 @@ function quadData_Cropped=cropPoints(quadData,percentile)
     for j=1:n
         d(j)=sqrt(quadData(j,2)^2+quadData(j,3)^2);
     end
-    [counts,centers]=hist(d(:),100);
-    cumulative=cumsum(counts)/sum(counts(:));
-    plot(centers,cumulative)
-    radius=min(centers((cumulative > percentile)));
+    
     
     %Next we remove all points that are outside this radius. Because this
     %will change the indices, we will have to remember this change and

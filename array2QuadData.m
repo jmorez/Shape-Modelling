@@ -1,4 +1,4 @@
-function quadData=array2QuadData(array)
+function quadData=array2quaddata(array)
     %Transforms the raw grid-data into a neat M by 8 array with the columns
     %representing:
     %vertex_id vertex_x vertex_y vertex_z quad_id1 quad_id2 quad_id3 quad_id4
