@@ -13,7 +13,7 @@ if (f~=-1)
             result=textscan(line,'%s %d');
             quads_amount=result{2};
             if(~isnumeric(quads_amount) || ~isinteger(quads_amount) || ~(quads_amount > 0))
-                sprintf('Invalid amount of quads!')
+                fprintf(1,'Invalid amount of quads!')
                 return
             end
         else
@@ -55,6 +55,6 @@ if (f~=-1)
     disp('Done!')
     fclose(f);
 else
-    sprintf('Unable to open file: "%s" \n', file);
+    fprintf(1,'Unable to open file: "%s" \n', file);
     array=[];
 end

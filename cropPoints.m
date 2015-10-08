@@ -1,4 +1,4 @@
-function quadData_Cropped=cropPoints(quadData,radius)
+function quadData_Cropped=cropPoints(quadData)
     %It will remove all points outside a 
     %cylinder with given radius and make sure the face-data is not corrupted due
     %to the removing of points. It still corrupts face-data though :(
@@ -10,6 +10,15 @@ function quadData_Cropped=cropPoints(quadData,radius)
         d(j)=sqrt(quadData(j,2)^2+quadData(j,3)^2);
     end
     
+    %Find the 
+    [counts,centers]=hist(d(:),1000);
+    counts=smooth(counts,15);
+    [peaks,locs]=findpeaks(counts,centers);
+    p=max(peaks);
+    x_max=locs((peaks==p));
+    delta=abs(p/2-counts);
+    x_fwhm=centers((min(delta)==delta));
+    radius=2*5*abs(x_max-x_fwhm); %This is quite arbitrary.
     
     %Next we remove all points that are outside this radius. Because this
     %will change the indices, we will have to remember which vertices were
@@ -34,16 +43,16 @@ function quadData_Cropped=cropPoints(quadData,radius)
     %it gets ignored when exporting
     for j=1:length(Q)
         if(Q(j,1)~=0)
-            Q_remapped(j,1)=mapping(Q(j,1))*keep_vertex(Q(j,1));%-(~keep_vertex(Q(j,1)));
+            Q_remapped(j,1)=mapping(Q(j,1))*keep_vertex(Q(j,1));
         end
         if(Q(j,2)~=0)
-            Q_remapped(j,2)=mapping(Q(j,2))*keep_vertex(Q(j,2));%-(~keep_vertex(Q(j,2)));
+            Q_remapped(j,2)=mapping(Q(j,2))*keep_vertex(Q(j,2));
         end
         if(Q(j,3)~=0)
-            Q_remapped(j,3)=mapping(Q(j,3))*keep_vertex(Q(j,3));%-(~keep_vertex(Q(j,3)));
+            Q_remapped(j,3)=mapping(Q(j,3))*keep_vertex(Q(j,3));
         end
         if(Q(j,4)~=0)
-            Q_remapped(j,4)=mapping(Q(j,4))*keep_vertex(Q(j,4));%-(~keep_vertex(Q(j,4)));
+            Q_remapped(j,4)=mapping(Q(j,4))*keep_vertex(Q(j,4));
         end
     end
     quadData_Cropped(:,5:8)=Q_remapped-1;
