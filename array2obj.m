@@ -18,8 +18,10 @@ function array2obj(quads,file)
             face=[quads(j,11) quads(j,12) quads(j,13) quads(j,14)];
             %Remove -1 entries and adjust to one-indexing
             face=face(face~=-1)+1;
-            face=int2str(face);
-            fprintf(f,'f %s \n',face);
+            if length(face)==4 %Remove anything that is not a quad
+                face=int2str(face);
+                fprintf(f,'f %s \n',face);
+            end
             %Display progress
             if mod(j,round(n/10)-1)==0
                 msg = sprintf('array2obj: %d of %d quads written... \n', j,n);

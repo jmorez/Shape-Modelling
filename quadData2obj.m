@@ -1,4 +1,4 @@
-function quadData2obj(quadData,file)
+function quaddata2obj(quadData,file)
     n=length(quadData);
     f=fopen(file,'w');
     if (f~=-1)

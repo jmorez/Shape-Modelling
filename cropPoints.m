@@ -29,9 +29,9 @@ function quadData_Cropped=cropPoints(quadData,percentile)
     mapping=cumsum(keep_vertex);
     %mapping=mapping(keep_vertex);
 
-    %Remove vertices with the appropriate flag.
+    %Remove all vertices that were flagged
     quadData_Cropped=quadData(keep_vertex==1,:);
-    %Extract quad indices for remapping
+    %Extract quad indices for remapping, 
     Q=quadData_Cropped(:,5:8)+1;
     Q_remapped=zeros(size(Q));  
     

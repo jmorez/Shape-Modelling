@@ -5,7 +5,7 @@ function batch_grid2obj(input_dir,output_dir)
     %Counter
     k=1;
     for j=1:n
-        if files(j).isdir==0 && strfind(files(j).name,'.txt')
+        if files(j).isdir==0 && ~isempty(strfind(files(j).name,'.grid'))
             %Display progress
             fprintf(1,'Converting file %s. \n',files(j).name);
             
