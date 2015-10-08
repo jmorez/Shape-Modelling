@@ -1,8 +1,8 @@
 %Subsampling factor
 stride=4;
-outputdir='processed';
-n=length(quadData_r);
+outputdir='D:\GitHub\Shape-Modelling\processed';
 
+n=length(quadData_r);
 quadData_t=quadData_r;
 
 for j=1:(n-1)

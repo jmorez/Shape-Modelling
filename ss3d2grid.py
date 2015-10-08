@@ -5,9 +5,9 @@
 import io, os, re, shutil, gzip, glob
 
 #Change these accordingly. Glob will scan all subfolders so you can point it to
-#a folder that is a few levels above.
+#a folder that is a few levels above. The last two slashes are important!
 inputdir=r"C:\Users\janmo\Documents\Beelden\18092015\\"
-outputdir=r"C:\Users\janmo\Desktop\converted\\"
+outputdir=r"D:\GitHub\Shape-Modelling\grid\\"
 os.chdir(inputdir)
 #Create folder to store the .gzip files
 if not os.path.exists(outputdir):
