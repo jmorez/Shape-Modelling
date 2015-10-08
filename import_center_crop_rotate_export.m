@@ -1,4 +1,4 @@
-%% Import
+%% Import .grid files. 
 input_dir='grid';
 files=dir(input_dir);
 n=1;
