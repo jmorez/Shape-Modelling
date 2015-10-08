@@ -97,20 +97,20 @@ inp = inputParser;
 inp.addRequired('q', @(x)isreal(x) && size(x,1) == 3);
 inp.addRequired('p', @(x)isreal(x) && size(x,1) == 3);
 
-inp.addOptional('iter', 10, @(x)x > 0 && x < 10^5);
+inp.addOptional('iter', 100, @(x)x > 0 && x < 10^5);
 
 inp.addParamValue('Boundary', [], @(x)size(x,1) == 1);
 
 inp.addParamValue('EdgeRejection', false, @(x)islogical(x));
 
-inp.addParamValue('Extrapolation', false, @(x)islogical(x));
+inp.addParamValue('Extrapolation', true, @(x)islogical(x));
 
 validMatching = {'bruteForce','Delaunay','kDtree'};
 inp.addParamValue('Matching', 'kDtree', @(x)any(strcmpi(x,validMatching)));
 %inp.addParamValue('Matching', 'bruteForce', @(x)any(strcmpi(x,validMatching)));
 
 validMinimize = {'point','plane','lmapoint'};
-inp.addParamValue('Minimize', 'point', @(x)any(strcmpi(x,validMinimize)));
+inp.addParamValue('Minimize', 'plane', @(x)any(strcmpi(x,validMinimize)));
 
 inp.addParamValue('Normals', [], @(x)isreal(x) && size(x,1) == 3);
 
