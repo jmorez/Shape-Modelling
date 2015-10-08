@@ -8,7 +8,7 @@ function quaddata2obj(quadData,file)
             fprintf(f,'v %f %f %f \n',quadData(j,2),quadData(j,3),quadData(j,4));
             %Display progress
             if mod(j,round(n/10)-1)==0
-                msg = sprintf('array2obj: %d of %d vertices written... \n', j,n);
+                msg = sprintf('quaddata2obj: %d of %d vertices written... \n', j,n);
                 fprintf([reverseStr, msg]);
                 reverseStr = repmat(sprintf('\b'), 1, length(msg));
             end
@@ -24,7 +24,7 @@ function quaddata2obj(quadData,file)
             end
             %Display progress
             if mod(j,round(n/10)-1)==0
-                msg = sprintf('array2obj: %d of %d quads written... \n', j,n);
+                msg = sprintf('quaddata2obj: %d of %d quads written... \n', j,n);
                 fprintf([reverseStr, msg]);
                 reverseStr = repmat(sprintf('\b'), 1, length(msg));
             end
