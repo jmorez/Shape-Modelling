@@ -33,9 +33,15 @@ for j=2:n
     end
 end
 
+%% Remove bad quads
+
+for j=1:n
+    quadData_tr=removeBadQuads(quadData_r{j},percentile);
+end
+
 %% Export
 outputdir='processed';
 for j=1:n
     file=strcat(outputdir,'/',num2str(j),'.obj');
-    quaddata2obj(quadData_r{j},file);
+    quaddata2obj(quadData_tr{j},file);
 end

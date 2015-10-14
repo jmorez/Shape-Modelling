@@ -21,11 +21,11 @@ function [angle,index]=quadSkewAngle(quadData)
     reverseStr='';
     %Calculate eigenvalues of each quad
     angle=zeros(length(quads_filtered),1);
-    for j=1:length(quads_filtered)
-        v1=quadData(quads_filtered(j,1),2:4);
-        v2=quadData(quads_filtered(j,2),2:4);
-        v3=quadData(quads_filtered(j,3),2:4);
-        v4=quadData(quads_filtered(j,4),2:4);
+    for j=1:n
+        v1=quadData(quads_filtered(j,1)+1,2:4);
+        v2=quadData(quads_filtered(j,2)+1,2:4);
+        v3=quadData(quads_filtered(j,3)+1,2:4);
+        v4=quadData(quads_filtered(j,4)+1,2:4);
         %PCA-measure, slow, not very useful either
 %       M=[v1' v2' v3' v4'];
 %       M_c=M-repmat(mean(M,2),1,4);

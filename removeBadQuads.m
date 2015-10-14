@@ -9,6 +9,8 @@ function quadData_new=removeBadQuads(quadData,percentile)
     right=cumsum(counts(idx_max:end)) < 0.5*percentile;
     
     %Same for left side
+    %Suggestion: flip left side around and add it to the right side so we
+    %have a symmetric trimming.
     left=cumsum(flip(counts(1:idx_max))) < 0.5*percentile;
     right_idx=idx_max+find(right,1,'last')+1;
     left_idx=idx_max-find(left,1,'last')+1;
@@ -18,6 +20,7 @@ function quadData_new=removeBadQuads(quadData,percentile)
 %     plot(centers(left_idx)*[1 1],[0 1],'r')
 %     plot(centers(right_idx)*[1 1],[0 1],'r')
 %     hold off
+
     max_angle=centers(right_idx);
     min_angle=centers(left_idx);
     keep_quad=zeros(length(quadData),1);
