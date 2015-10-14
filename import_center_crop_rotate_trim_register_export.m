@@ -52,7 +52,7 @@ end
 %% 6. ICP
 %Subsampling factor
 stride=4;
-fprintf(1,'Starting fine registration with ICP. Subsampling with 1/ %d th of all points. \n',stride);
+fprintf(1,'Starting fine registration with ICP. Subsampling with 1/%d th of all points. \n',stride);
 
 n=length(quadData_tr);
 quadData_t=quadData_tr;
