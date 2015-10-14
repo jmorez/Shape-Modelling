@@ -2,6 +2,7 @@
 input_dir='grid';
 files=dir(input_dir);
 n=1;
+clear quadData;
 for j=1:length(files)
     [~,file,ext]=fileparts(files(j).name);
     if ~files(j).isdir && strcmp(ext,'.grid')

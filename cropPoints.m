@@ -1,5 +1,5 @@
 function quadData_Cropped=cropPoints(quadData)
-    %It will remove all points outside a 
+    %This function will remove all points outside a 
     %cylinder with given radius and make sure the face-data is not corrupted due
     %to the removing of points. It still corrupts face-data though :(
     n=length(quadData);
@@ -10,7 +10,8 @@ function quadData_Cropped=cropPoints(quadData)
         d(j)=sqrt(quadData(j,2)^2+quadData(j,3)^2);
     end
     
-    %Find the 
+    %Find the largest peak and use the FWHM to select the majority of the
+    %points.
     [counts,centers]=hist(d(:),1000);
     counts=smooth(counts,15);
     [peaks,locs]=findpeaks(counts,centers);
@@ -18,7 +19,7 @@ function quadData_Cropped=cropPoints(quadData)
     x_max=locs((peaks==p));
     delta=abs(p/2-counts);
     x_fwhm=centers((min(delta)==delta));
-    radius=2*5*abs(x_max-x_fwhm); %This is quite arbitrary.
+    radius=2*5*abs(x_max-x_fwhm); %This 5 is quite arbitrary.
     
     %Next we remove all points that are outside this radius. Because this
     %will change the indices, we will have to remember which vertices were
@@ -35,6 +36,7 @@ function quadData_Cropped=cropPoints(quadData)
 
     %Remove all vertices that were flagged
     quadData_Cropped=quadData(keep_vertex==1,:);
+    quadData_Cropped(:,1)=0:(length(quadData_Cropped)-1);
     %Extract quad indices for remapping, switch to one-based indexing
     Q=quadData_Cropped(:,5:8)+1;
     Q_remapped=zeros(size(Q));  

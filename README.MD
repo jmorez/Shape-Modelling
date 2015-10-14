@@ -12,6 +12,5 @@ Coming soon...
 
 <h2>To Do:</h2>
 <ul>
-<li>Make sure face-data is preserved when cropping.</li>
-<li>Export roughly aligned data as .obj
+<li>Make function names consistent</li>
 </ul>
