@@ -6,7 +6,6 @@ clear quadData;
 for j=1:length(files)
     [~,file,ext]=fileparts(files(j).name);
     if ~files(j).isdir && strcmp(ext,'.grid')
-        ~files(j).isdir
         strcmp(ext,'.grid')
         quadData{n}=array2quaddata(grid2array(strcat(input_dir,'/',files(j).name)));
         n=n+1;
