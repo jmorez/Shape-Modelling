@@ -40,7 +40,7 @@ if (f~=-1)
         
         %Display progress
         if mod(j,round(quads_amount/50))==0
-            msg = sprintf('grid2array: %d of %d read from file "%s" \n', j,quads_amount,file);
+            msg = sprintf('grid2Array: %d of %d read from file "%s" \n', j,quads_amount,file);
             fprintf([reverseStr, msg]);
             reverseStr = repmat(sprintf('\b'), 1, length(msg));
         end
