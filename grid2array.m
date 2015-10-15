@@ -1,6 +1,6 @@
 %Written by Jan Morez, 30/09/2015
 %Universiteit Antwerpen
-function array=grid2array(file)
+function array=grid2Array(file)
 %Output is a M by 14-array with each column representing:
 %[vertex ID] vx vy vz u v pu pv quad1 quad2 quad3 quad4
 f=fopen(file);

@@ -1,4 +1,4 @@
-function quadData_t=rigidtransform(quadData,TR,TT)
+function quadData_t=rigidTransform(quadData,TR,TT)
     n=length(quadData);
     quadData_t=quadData;
     for j=1:n

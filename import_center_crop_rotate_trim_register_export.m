@@ -13,7 +13,7 @@ n=1;
 for j=1:length(files)
     [~,file,ext]=fileparts(files(j).name);
     if ~files(j).isdir && strcmp(ext,'.grid')
-        quadData{n}=array2quaddata(grid2array(strcat(input_dir,'/',files(j).name)));
+        quadData{n}=array2QuadData(grid2Array(strcat(input_dir,'/',files(j).name)));
         n=n+1;
     end 
 end
@@ -22,11 +22,13 @@ n=n-1;
 %% 2. Center 
 fprintf(1,'Starting rough registration. \n');
 for j=1:n
+    fprintf(1,'Centering %d of %d. \n',j,n);
     quadData_c{j}=centerPoints(quadData{j});
 end
 
 %% 3. Crop
 for j=1:n
+    fprintf(1,'Cropping %d of %d. \n',j,n);
     quadData_cr{j}=cropPoints(quadData_c{j});
 end
 
@@ -34,6 +36,7 @@ end
 theta=pi/4;
 quadData_r{1}=quadData_cr{1};
 for j=2:n
+    fprintf(1,'Rotating %d of %d. \n',j,n);
     R=rotz(theta*(j-1));
     quadData_r{j}=quadData_cr{j};
     for k=1:length(quadData_r{j})
@@ -43,9 +46,10 @@ end
 
 %% 5. Remove bad quads based on their skewness.
 %Percentile of quads to keep. Lower means more quads will be removed.
-percentile=0.975;
+percentile=0.95;
 disp('Removing bad quads. \n')
 for j=1:n
+    fprintf(1,'Removing bad quads in %d of %d. \n',j,n);
     quadData_tr{j}=removeBadQuads(quadData_r{j},percentile);
 end
 
@@ -64,7 +68,7 @@ for j=1:(n-1)
     [TR,TT]=icp(fixed,moving);
     %% 
     for k=1:j
-        quadData_t{k}=rigidtransform(quadData_t{k},TR,TT);
+        quadData_t{k}=rigidTransform(quadData_t{k},TR,TT);
     end
     fprintf(1,'Registered %d out of %d. \n',j,n-1);
 end
@@ -74,5 +78,5 @@ end
 outputdir='processed';
 for j=1:n
     file=strcat(outputdir,'/',num2str(j),'.obj');
-    quaddata2obj(quadData_t{j},file);
+    quadData2Obj(quadData_t{j},file);
 end

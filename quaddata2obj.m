@@ -1,4 +1,4 @@
-function quaddata2obj(quadData,file)
+function quadData2Obj(quadData,file)
     n=length(quadData);
     f=fopen(file,'w');
     if (f~=-1)
@@ -18,7 +18,7 @@ function quaddata2obj(quadData,file)
             face=[quadData(j,5) quadData(j,6) quadData(j,7) quadData(j,8)];
             %Remove -1 entries and adjust to one-indexing
             face=face(face~=-1)+1;
-            if length(face)==4 %Remove anything that is not a quad
+            if length(face)> 2 %Remove anything that is not a quad
                 face=int2str(face);
                 fprintf(f,'f %s \n',face);
             end

@@ -26,10 +26,6 @@ function [angle,index]=quadSkewAngle(quadData)
         v2=quadData(quads_filtered(j,2)+1,2:4);
         v3=quadData(quads_filtered(j,3)+1,2:4);
         v4=quadData(quads_filtered(j,4)+1,2:4);
-        %PCA-measure, slow, not very useful either
-%       M=[v1' v2' v3' v4'];
-%       M_c=M-repmat(mean(M,2),1,4);
-%       ar(j,1:2)=pca(M_c,'NumComponents',2);
         
         %Skew-angle quality measure
         x=(v1-v4-v3+v2);
@@ -39,7 +35,7 @@ function [angle,index]=quadSkewAngle(quadData)
         
         %Display progress
         if mod(j,round(n/1000)-1)==0
-            msg = sprintf('quadSkewAngle: %d of %d quads analyzed... \n', j,n);
+            msg = sprintf('quadSkewAngle: %d of %d quads analyzed. \n', j,n);
             fprintf([reverseStr, msg]);
             reverseStr = repmat(sprintf('\b'), 1, length(msg));
         end

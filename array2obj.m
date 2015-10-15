@@ -1,4 +1,4 @@
-function array2obj(quads,file)
+function array2Obj(quads,file)
     n=length(quads);
     f=fopen(file,'w');
     if (f~=-1)
