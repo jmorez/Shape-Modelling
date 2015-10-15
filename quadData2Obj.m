@@ -18,7 +18,7 @@ function quadData2Obj(quadData,file)
             face=[quadData(j,5) quadData(j,6) quadData(j,7) quadData(j,8)];
             %Remove -1 entries and adjust to one-indexing
             face=face(face~=-1)+1;
-            if length(face)> 2 %Remove anything that is not a quad
+            if length(face)> 2 %Remove anything that is not a quad, this doesn't work though
                 face=int2str(face);
                 fprintf(f,'f %s \n',face);
             end
