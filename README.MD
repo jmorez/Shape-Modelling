@@ -12,5 +12,5 @@ Coming soon...
 
 <h2>To Do:</h2>
 <ul>
-<li>quadData2TriData</li>
+<li>fix non rigid ICP (look at input and make sure it is correct)</li>
 </ul>
