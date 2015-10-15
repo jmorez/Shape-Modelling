@@ -47,7 +47,7 @@ end
 %% 5. Remove bad quads based on their skewness.
 %Percentile of quads to keep. Lower means more quads will be removed.
 percentile=0.95;
-disp('Removing bad quads.')
+disp('Removing bad quads. \n')
 for j=1:n
     fprintf(1,'Removing bad quads in %d of %d. \n',j,n);
     quadData_tr{j}=removeBadQuads(quadData_r{j},percentile);
