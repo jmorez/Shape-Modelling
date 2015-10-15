@@ -68,16 +68,16 @@ else
 end
 
 %plot of the meshes
-h=trisurf(sourceF,sourceV(:,1),sourceV(:,2),sourceV(:,3),0.3,'Edgecolor','none');
-hold
-light
-lighting phong;
-set(gca, 'visible', 'off')
-set(gcf,'Color',[1 1 0.88])
-view(90,90)
-set(gca,'DataAspectRatio',[1 1 1],'PlotBoxAspectRatio',[1 1 1]);
-tttt=trisurf(targetF,targetV(:,1),targetV(:,2),targetV(:,3),'Facecolor','m','Edgecolor','none');
-alpha(0.6)
+% h=trisurf(sourceF,sourceV(:,1),sourceV(:,2),sourceV(:,3),0.3,'Edgecolor','none');
+% hold
+% light
+% lighting phong;
+% set(gca, 'visible', 'off')
+% set(gcf,'Color',[1 1 0.88])
+% view(90,90)
+% set(gca,'DataAspectRatio',[1 1 1],'PlotBoxAspectRatio',[1 1 1]);
+% tttt=trisurf(targetF,targetV(:,1),targetV(:,2),targetV(:,3),'Facecolor','m','Edgecolor','none');
+% alpha(0.6)
 
 [p]=size(sourceV,1);
 
@@ -151,9 +151,9 @@ nrseedingpoints=round(10^(kernel2(1,i)));
     sourceV=sourceV+test2;
     
      [error1,sourceV,transform]=rigidICP(targetV,sourceV,1,Indices_edgesS,Indices_edgesT);
-     delete(h)
-     h=trisurf(sourceF,sourceV(:,1),sourceV(:,2),sourceV(:,3),'FaceColor','y','Edgecolor','none');
-     alpha(0.6)
+     %delete(h)
+     %h=trisurf(sourceF,sourceV(:,1),sourceV(:,2),sourceV(:,3),'FaceColor','y','Edgecolor','none');
+     %alpha(0.6)
     pause (0.1)
     
 end
@@ -164,8 +164,8 @@ disp('Local optimization');
 arraymap = repmat(cell(1),p,1);
 kk=12+iterations;
 
-delete(tttt)
-tttt=trisurf(targetF,targetV(:,1),targetV(:,2),targetV(:,3),'Facecolor','m','Edgecolor','none');
+%delete(tttt)
+%tttt=trisurf(targetF,targetV(:,1),targetV(:,2),targetV(:,3),'Facecolor','m','Edgecolor','none');
 
 TR = triangulation(targetF,targetV); 
 normalsT = vertexNormal(TR).*cutoff;
@@ -253,9 +253,9 @@ end
 sourceV=sourceVapprox+0.5*(sourceV-sourceVapprox);
 
 toc
-     delete(h)
-     h=trisurf(sourceF,sourceV(:,1),sourceV(:,2),sourceV(:,3),'FaceColor','y','Edgecolor','none');   
-    pause (0.1)
+%      delete(h)
+%      h=trisurf(sourceF,sourceV(:,1),sourceV(:,2),sourceV(:,3),'FaceColor','y','Edgecolor','none');   
+%     pause (0.1)
 
 end
 
