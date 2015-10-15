@@ -12,5 +12,5 @@ Coming soon...
 
 <h2>To Do:</h2>
 <ul>
-<li>Make function names consistent</li>
+<li>quadData2TriData</li>
 </ul>

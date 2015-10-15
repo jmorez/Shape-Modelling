@@ -45,17 +45,18 @@ for j=2:n
 end
 
 %% 5. Remove bad quads based on their skewness.
-%Percentile of quads to keep. Lower means more quads will be removed.
-percentile=0.95;
+%The treshold determines how skewed a quad can be without being removed.
+%Note that angles smaller than pi/4 might result in too much removal.
+angle_treshold=pi/4;
 disp('Removing bad quads.')
 for j=1:n
     fprintf(1,'Removing bad quads in %d of %d. \n',j,n);
-    quadData_tr{j}=removeBadQuads(quadData_r{j},percentile);
+    quadData_tr{j}=removeBadQuads(quadData_r{j},angle_treshold);
 end
 
 %% 6. ICP
 %Subsampling factor
-stride=4;
+stride=8;
 fprintf(1,'Starting fine registration with ICP. Subsampling with 1/%d th of all points. \n',stride);
 
 n=length(quadData_tr);
@@ -74,7 +75,7 @@ for j=1:(n-1)
 end
 
 
-%% 7. Export
+% 7. Export
 outputdir='processed';
 for j=1:n
     file=strcat(outputdir,'/',num2str(j),'.obj');

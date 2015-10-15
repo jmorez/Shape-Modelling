@@ -19,7 +19,7 @@ function [angle,index]=quadSkewAngle(quadData)
     quads_filtered=quads_filtered(keep_quad==1,:);
     n=length(quads_filtered);
     reverseStr='';
-    %Calculate eigenvalues of each quad
+    %Calculate skew angle for each quad
     angle=zeros(length(quads_filtered),1);
     for j=1:n
         v1=quadData(quads_filtered(j,1)+1,2:4);
