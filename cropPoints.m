@@ -1,13 +1,14 @@
-function quadData_Cropped=cropPoints(quadData)
-    %This function will remove all points outside a 
-    %cylinder with given radius and make sure the face-data is not corrupted due
-    %to the removing of points. It still corrupts face-data though :(
-    n=length(quadData);
+function quadData_Cropped=cropPoints(object)
+    %This function will remove all points outside a cylinder with a
+    %diameter of five times (heuristically chosen) the FWHM of the distance
+    %distribution. Since removing points will change the vertex indexingm,
+    %we have to
+    n=length(object.v);
     d=zeros(n,1);
     
     %Calculate (cylindrical) distance for all points.
     for j=1:n
-        d(j)=sqrt(quadData(j,2)^2+quadData(j,3)^2);
+        d(j)=sqrt(object(j,2)^2+object(j,3)^2);
     end
     
     %Find the largest peak and use the FWHM to select the majority of the
@@ -30,7 +31,5 @@ function quadData_Cropped=cropPoints(quadData)
             keep_vertex(j)=0;
         end
     end
-    
-    quadData_Cropped=trimQuadDataByIndex(quadData,keep_vertex);
-
+    quadData_Cropped=trimQuadDataByIndex(object,keep_vertex);
 end

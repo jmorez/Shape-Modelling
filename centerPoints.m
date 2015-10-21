@@ -1,14 +1,14 @@
-function quadData_Centered=centerPoints(quadData)
+function object_Centered=centerPoints(object)
     %Calculate the centroid
-    xcenter=mean(quadData(:,2));
-    ycenter=mean(quadData(:,3));
-    zcenter=mean(quadData(:,4));
+    xcenter=mean(object.v(:,1));
+    ycenter=mean(object.v(:,2));
+    zcenter=mean(object.v(:,3));
     
-    quadData_Centered=quadData;
+    %Allocate output
+    object_Centered=object;
     
     %Center each point.
-    quadData_Centered(:,2)=quadData(:,2)-xcenter;
-    quadData_Centered(:,3)=quadData(:,3)-ycenter;
-    quadData_Centered(:,4)=quadData(:,4)-zcenter;
-
+    object_Centered.v(:,1)=object.v(:,1)-xcenter;
+    object_Centered.v(:,2)=object.v(:,2)-ycenter;
+    object_Centered.v(:,3)=object.v(:,3)-zcenter;
 end

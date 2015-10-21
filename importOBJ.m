@@ -1,15 +1,16 @@
 function object=importOBJ(objfile)
     f=fopen(objfile);
-%Get file size, because preallocation *really* makes a difference now.
+    %Get file size, because preallocation *really* makes a difference now.
     fseek(f, 0, 'eof');
     fileSize=ftell(f);
     frewind(f);
     %# Read the whole file.
     data=fread(f, fileSize, 'uint8');
-    %# Count number of line-feeds and increase by one.
+    %# Count number of line-feeds.
     numLines=sum(data==10);
     frewind(f)
-%Allocate return object
+    
+    %Allocate return object
     object=struct(  'v',zeros(numLines,3), ...
                     'vt',zeros(numLines,2),...
                     'vn',zeros(numLines,3),...
@@ -45,12 +46,12 @@ function object=importOBJ(objfile)
             end
             %Display progress
             if mod(j,10000)==0
-                msg = sprintf('obj2QuadData: %d of %d lines read from file "%s" \n', j, numLines, objfile);
+                msg = sprintf('importOBJ: %d of %d lines read from file "%s" \n', j, numLines, objfile);
                 fprintf([reverseStr, msg]);
                 reverseStr = repmat(sprintf('\b'), 1, length(msg));
             end
         end
-        msg = sprintf('obj2QuadData: %d of %d lines read from file "%s" \n', numLines, numLines, objfile);
+        msg = sprintf('importOBJ: %d of %d lines read from file "%s" \n', numLines, numLines, objfile);
         fprintf([reverseStr, msg]);
                 
         object.v =object.v(1:(nv-1),:);

@@ -1,34 +1,40 @@
 %% 1. Import .grid files from <input_dir>. NOTE: use forward slashes!
-input_dir='C:/Users/Jan Morez/Documents/MATLAB/Shape-Modelling/grid';
+input_dir='C:/Users/Jan Morez/Documents/MATLAB/Shape-Modelling/129';
 outputdir='C:/Users/Jan Morez/Documents/MATLAB/Shape-Modelling/processed';
 
 if ~exist(outputdir,'dir')
     fprintf(1,'"%s" does not exist. Creating it in current working path.',outputdir);
     mkdir(outputdir);
 end
-%%
+
+%% Import all files found in input_dir
+n=0; %File counter
 files=dir(input_dir);
-n=1;
+disp('Importing files...')
 for j=1:length(files)
     [~,file,ext]=fileparts(files(j).name);
-    if ~files(j).isdir && strcmp(ext,'.grid')
-        quadData{n}=array2QuadData(grid2Array(strcat(input_dir,'/',files(j).name)));
+    if ~files(j).isdir && strcmp(ext,'.obj')
+        objects_raw{n+1}=importOBJ(strcat(input_dir,'/',files(j).name));
         n=n+1;
     end 
 end
-n=n-1;
+if n==0
+    fprintf(1,'Failed to find any .obj files in "%s"! Aborting... \n',input_dir);
+    return
+end
 
 %% 2. Center 
-fprintf(1,'Starting rough registration. \n');
+disp('Starting rough registration... \n');
+disp('Centering...')
 for j=1:n
     fprintf(1,'Centering %d of %d. \n',j,n);
-    quadData_c{j}=centerPoints(quadData{j});
+    objects_centered{j}=centerPoints(objects_raw{j});
 end
 
 %% 3. Crop
 for j=1:n
     fprintf(1,'Cropping %d of %d. \n',j,n);
-    quadData_cr{j}=cropPoints(quadData_c{j});
+    quadData_cr{j}=cropPoints(objects_centered{j});
 end
 
 %% 4. Rotate
