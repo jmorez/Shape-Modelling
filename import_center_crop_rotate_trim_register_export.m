@@ -2,7 +2,6 @@
 input_dir='C:/Users/Jan Morez/Documents/MATLAB/Shape-Modelling/grid';
 outputdir='C:/Users/Jan Morez/Documents/MATLAB/Shape-Modelling/processed';
 
-
 if ~exist(outputdir,'dir')
     fprintf(1,'"%s" does not exist. Creating it in current working path.',outputdir);
     mkdir(outputdir);
