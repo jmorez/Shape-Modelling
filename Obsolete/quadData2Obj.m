@@ -1,7 +1,10 @@
 function quadData2Obj(quadData,file)
     n=length(quadData);
     f=fopen(file,'w');
-    if (f~=-1)
+    if f==-1
+        fprintf(1,'Error: failed to create file: "%s" \n',file);
+        return
+    else
         %Needed for progress report
         reverseStr='';
         for j=1:n
@@ -30,7 +33,5 @@ function quadData2Obj(quadData,file)
             end
         end
         fclose(f);
-    else
-        fprintf(1,'Error: failed to create file: "%s" \n',file);
     end
 end

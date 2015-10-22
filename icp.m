@@ -97,7 +97,7 @@ inp = inputParser;
 inp.addRequired('q', @(x)isreal(x) && size(x,1) == 3);
 inp.addRequired('p', @(x)isreal(x) && size(x,1) == 3);
 
-inp.addOptional('iter', 100, @(x)x > 0 && x < 10^5);
+inp.addOptional('iter', 750, @(x)x > 0 && x < 10^5);
 
 inp.addParamValue('Boundary', [], @(x)size(x,1) == 1);
 
