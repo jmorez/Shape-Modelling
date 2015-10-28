@@ -1,5 +1,6 @@
 base_dir='C:/Users/Jan Morez/Documents/Data/';
-input_dirs={'97','100','103','113','129','131','133','134','137','141','145','149','150','152','154'};
+input_dirs={'100'};
+%input_dirs={'100','103','113','129','131','133','134','137','141','145','149','150','152','154'};
 
 for k=1:length(input_dirs)
     %% 1. Import .grid files from <input_dir>. NOTE: use forward slashes!

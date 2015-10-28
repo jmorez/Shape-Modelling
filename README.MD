@@ -13,6 +13,6 @@ Coming soon...
 <h2>To Do:</h2>
 <ul>
 <li>fix non rigid ICP (look at input and make sure it is correct)</li>
-<li>Make input and output in the .py script a command line argument</li>
-<li> Ditch quadData and work with cells that are just like .objs </li>
+<li>Use surface normals</li>
+<li>Switch off the p-surface normal estimation as we already have this data</li>
 </ul>
