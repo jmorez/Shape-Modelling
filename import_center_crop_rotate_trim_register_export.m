@@ -43,20 +43,20 @@ end
 
 %% 5. Remove bad quads based on their skewness.
 %Bypassing this for a moment...
-%objects_clean=objects_rotated;
+objects_clean=objects_rotated;
 
-%The treshold determines how skewed a quad can be without being removed.
-%Note that angles smaller than pi/4 might result in too much removal.
-angle_treshold=pi/4;
-disp('Removing bad quads.')
-for j=1:n
-    fprintf(1,'Removing bad quads in %d of %d. \n',j,n);
-    objects_clean{j}=removeBadQuads(objects_rotated{j},angle_treshold);
-    
-    file=strcat(outputdir,'/clean',num2str(j),'.obj');
-    exportOBJ(objects_clean{j},file);
-     
- end
+% %The treshold determines how skewed a quad can be without being removed.
+% %Note that angles smaller than pi/4 might result in too much removal.
+% angle_treshold=pi/4;
+% disp('Removing bad quads.')
+% for j=1:n
+%     fprintf(1,'Removing bad quads in %d of %d. \n',j,n);
+%     objects_clean{j}=removeBadQuads(objects_rotated{j},angle_treshold);
+%     
+%     file=strcat(outputdir,'/clean',num2str(j),'.obj');
+%     exportOBJ(objects_clean{j},file);
+%      
+%  end
 
 %% 6. ICP
 %Subsampling factor
@@ -64,9 +64,6 @@ stride=8;
 fprintf(1,'Starting fine registration with ICP. Subsampling with 1/%d th of all points. \n',stride);
 
 objects_registered=objects_clean;
-
-%!!!REMOVE THIS AFTER DEBUGGING!!!
-
 for j=1:(n-1)
     fixed =objects_registered{j+1}.v(1:stride:end,1:3)';
     moving=objects_registered{j}.v(1:stride:end,1:3)';
