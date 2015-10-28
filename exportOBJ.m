@@ -47,6 +47,7 @@ function exportOBJ(object,file)
             end
         end
         
+        disp('Done!')
         fclose(f);
     end
 end

@@ -1,5 +1,5 @@
 function object_t=rigidTransform(object,TR,TT)
-    n=length(object);
+    n=length(object.v);
     object_t=object;
     for j=1:n
         object_t.v(j,1:3)=(TR*object.v(j,1:3)'+TT)';

@@ -4,7 +4,7 @@ inputdir=sys.argv[1]
 outputdir=sys.argv[2]+"/"
 
 os.chdir(inputdir)
-#Create folder to store the .gzip files
+#Create folder to store the arranged files
 if not os.path.exists(outputdir):
     os.makedirs(outputdir)
 files=glob.glob("**/*.obj",recursive=True)

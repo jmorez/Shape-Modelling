@@ -1,6 +1,6 @@
 function triData_new=removeInvalidTriangles(triData)
     triData_new=triData;
-    keep_triangle=logical(zeros(length(triData{2}),1));
+    keep_triangle=logical(FALSE(length(triData{2}),1));
     %Find all valid triangles (i.e. without -1 entries)
     for j=1:length(triData{2})
         if sum(triData{2}(j,:)==-1)==0
