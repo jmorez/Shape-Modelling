@@ -97,13 +97,13 @@ inp = inputParser;
 inp.addRequired('q', @(x)isreal(x) && size(x,1) == 3);
 inp.addRequired('p', @(x)isreal(x) && size(x,1) == 3);
 
-inp.addOptional('iter', 200, @(x)x > 0 && x < 10^5);
+inp.addOptional('iter', 10, @(x)x > 0 && x < 10^5);
 
 inp.addParamValue('Boundary', [], @(x)size(x,1) == 1);
 
 inp.addParamValue('EdgeRejection', false, @(x)islogical(x));
 
-inp.addParamValue('Extrapolation', true, @(x)islogical(x));
+inp.addParamValue('Extrapolation', false, @(x)islogical(x));
 
 validMatching = {'bruteForce','Delaunay','kDtree'};
 inp.addParamValue('Matching', 'kDtree', @(x)any(strcmpi(x,validMatching)));
@@ -123,7 +123,7 @@ inp.addParamValue('Verbose', false, @(x)islogical(x));
 
 inp.addParamValue('Weight', @(x)ones(1,length(x)), @(x)isa(x,'function_handle'));
 
-inp.addParamValue('WorstRejection', 0.9, @(x)isscalar(x) && x > 0 && x < 1);
+inp.addParamValue('WorstRejection', 0, @(x)isscalar(x) && x > 0 && x < 1);
 
 inp.parse(q,p,varargin{:});
 arg = inp.Results;

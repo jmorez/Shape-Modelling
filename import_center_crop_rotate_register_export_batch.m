@@ -1,5 +1,5 @@
 base_dir='C:/Users/Jan Morez/Documents/Data/';
-input_dirs={'100'};
+input_dirs={'133'};
 %input_dirs={'100','103','113','129','131','133','134','137','141','145','149','150','152','154'};
 
 for k=1:length(input_dirs)
@@ -24,7 +24,7 @@ for k=1:length(input_dirs)
         fprintf(1,'Failed to find any .obj files in "%s"! Aborting... \n',input_dir);
         return
     end
-
+    
     %% 2. Center 
     disp('Starting rough registration:');
     disp('Centering...')
@@ -73,8 +73,12 @@ for k=1:length(input_dirs)
     for j=1:(n-1)
         fixed =objects_registered{j+1}.v(1:stride:end,1:3)';
         moving=objects_registered{j}.v(1:stride:end,1:3)';
-
-        [TR,TT]=icp(fixed,moving);
+        
+        [TR,TT]=icp(fixed,moving,'Matching','kDtree',...
+                                 'Normals',objects_registered{j+1}.vn(1:stride:end,1:3)',...
+                                 'Minimize','plane',...
+                                 'WorstRejection',0.4,...
+                                 'Extrapolation',false);
         for k=1:j
             objects_registered{k}=rigidTransform(objects_registered{k},TR,TT);
         end
@@ -93,6 +97,7 @@ for k=1:length(input_dirs)
         file=strcat(outputdir,'/',num2str(j),'.obj');
         exportOBJ(objects_registered{j},file);
     end
+    alldata{k}=objects_raw;
 end
 %Written by Jan Morez, 22/10/2015
 %Visielab, Antwerpen
