@@ -12,7 +12,5 @@ Coming soon...
 
 <h2>To Do:</h2>
 <ul>
-<li>fix non rigid ICP (look at input and make sure it is correct)</li>
-<li>Use surface normals</li>
-<li>Switch off the p-surface normal estimation as we already have this data</li>
+<li>Insert non-rigid ICP</li>
 </ul>
