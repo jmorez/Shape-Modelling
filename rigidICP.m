@@ -23,7 +23,7 @@ index=2;
 while (abs(errortemp(index-1,:)-errortemp(index,:)))>0.000001
 [errortemp(index+1,:),Reallignedsourcetemp]=ICPmanu_allign2(Prealligned_target,Reallignedsourcetemp,Indices_edgesS,Indices_edgesT);
 index=index+1;
-d=errortemp(index,:)
+d=errortemp(index,:); %This has been suppressed.
 
 end
 

@@ -26,7 +26,7 @@ function object_trimmed=trimObjectByIndex(object,flag)
             newfacedata(j,2)=mapping(facedata(j,2))*flag(facedata(j,2));
             newfacedata(j,3)=mapping(facedata(j,3))*flag(facedata(j,3));
             newfacedata(j,4)=mapping(facedata(j,4))*flag(facedata(j,4));
-            if prod(newfacedata(j,:))==0
+            if any(~newfacedata(j,:))==1
                 keepface(j)=0;
             end
     end

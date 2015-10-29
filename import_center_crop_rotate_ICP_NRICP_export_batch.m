@@ -1,11 +1,11 @@
 base_dir='C:/Users/Jan Morez/Documents/Data/';
 
-input_dirs={'113','129','131','133','134','137','141','145','149','150','152','154','100'};
+input_dirs={'103','113','129','131','133','134','137','141','145','149','150','152','154','100'};
 
 for k=1:length(input_dirs)
     %% 1. Import .grid files from <input_dir>. NOTE: use forward slashes!
     input_dir=strcat(base_dir,input_dirs{k});%'C:/Users/Jan Morez/Documents/Data/131';
-    outputdir=strcat('C:/Users/Guest/Desktop/RigideRegistratie/',input_dirs{k});
+    outputdir=strcat('C:/Users\Guest/Desktop/RigideRegistratie/',input_dir,'/registered');
     
     fprintf(1,'Processing %s . \n',input_dir);
     
@@ -66,8 +66,6 @@ for k=1:length(input_dirs)
 
     %% 6. ICP
     %Subsampling factor
-    %Volgorde van registratie aanpassen, altijd de kleinste dataset
-    %registreren aan de grotere
     stride=8;
     fprintf(1,'Starting fine registration with ICP. Subsampling with 1/%d th of all points. \n',stride);
 
@@ -88,6 +86,9 @@ for k=1:length(input_dirs)
     end
 
       %% 7. Non-rigid ICP
+      %General idea: simplify the mesh, pass the simplified mesh to
+      %nonrigidICP and store the sequence of transformations so we can
+      %apply it to the entire mesh.
 %     objects_nrregistered=objects_registered;
 %     for j=1:(n-1)
 %         fixed =objects_nrregistered{j+1};
