@@ -66,7 +66,7 @@ for k=1:length(input_dirs)
 
     %% 6. ICP
     %Subsampling factor
-    %Volgorde van registratie aanpassen, altijd de kleinste dataset
+    %Idee: volgorde van registratie aanpassen, altijd de kleinste dataset
     %registreren aan de grotere
     stride=8;
     fprintf(1,'Starting fine registration with ICP. Subsampling with 1/%d th of all points. \n',stride);
