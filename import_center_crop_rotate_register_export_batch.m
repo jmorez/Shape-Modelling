@@ -1,11 +1,12 @@
 base_dir='C:/Users/Jan Morez/Documents/Data/';
 
-input_dirs={'113','129','131','133','134','137','141','145','149','150','152','154','100'};
+%input_dirs={'113','129','131','133','134','137','141','145','149','150','152','154','100'};
+input_dirs={'113'};
 
-for k=1:length(input_dirs)
+for m=1:length(input_dirs)
     %% 1. Import .grid files from <input_dir>. NOTE: use forward slashes!
-    input_dir=strcat(base_dir,input_dirs{k});%'C:/Users/Jan Morez/Documents/Data/131';
-    outputdir=strcat('C:/Users/Guest/Desktop/RigideRegistratie/',input_dirs{k});
+    input_dir=strcat(base_dir,input_dirs{m});%'C:/Users/Jan Morez/Documents/Data/131';
+    outputdir=strcat('C:/Users/Guest/Desktop/RigideRegistratie/',input_dirs{m});
     
     fprintf(1,'Processing %s . \n',input_dir);
     
@@ -122,7 +123,9 @@ for k=1:length(input_dirs)
         %exportOBJ(objects_nrregistered{j},file);
         exportOBJ(objects_registered{j},file);
     end
-    alldata{k}=objects_raw;
+    %Something weird happens to this variable when opening a single
+    %folder...
+    alldata{m}=objects_raw;
 end
 %Written by Jan Morez, 22/10/2015
 %Visielab, Antwerpen
