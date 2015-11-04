@@ -1,9 +1,9 @@
-%function c=findTrueRotationCenter(obj_moving,obj_fixed)
-obj_moving=objects_raw{1}; obj_fixed=objects_raw{2};
-dist_treshold=0.2;
+function c=findTrueRotationCenter(obj_moving,obj_fixed,dist_treshold)
     %This function will attempt to find the true center of rotation c by
     %using the knowledge of two point clouds that are know to succesfully
     %be registered to eachother
+    %% Apply rough outlining and ICP to find matching point pairs
+    
     c=[];
     
     %Center objects
@@ -33,8 +33,7 @@ dist_treshold=0.2;
                              'Extrapolation',false);
                          
     moving_reg=rigidTransform(moving_cr,TR,TT);
-    %%
-    %pcshowpair(pointCloud(fixed_rot.v),pointCloud(moving_reg.v))
+
     %% Find point pairs that are close enough (dist_treshold)
     disp('Matching point pairs and calculating true center...')
     stride=32; %Subsample
@@ -50,20 +49,22 @@ dist_treshold=0.2;
         [idx,distance]=findNearestNeighbors(pointCloud(fixedvertices),point,1);
         
        %Use the original coordinates!!!
-        if distance < 0.5
+        if distance < dist_treshold
             c(n,1:2)=(eye(2,2)-R)\(obj_fixed.v(stride*idx,1:2)'-R*obj_moving.v(stride*j,1:2)');
+            weight(n)=distance;
             n=n+1;
         end
         if(mod(j,round(length(fixedvertices)/100))==0)
             fprintf(1,'%d %% \n',round(100*j/length(fixedvertices)));
         end
     end
+    weight=weight./(sum(weight));
     disp('Done!')
     %%
     [counts,locs]=hist3(obj_fixed.v(:,1:2),[100 100]);
     %[counts,locs]=hist3(c,[100 100]);
     imagesc(locs{1},locs{2},counts)
-    c_true=[mean(locs{1}) mean(locs{2})];
+    c_true=[sum(weight*c(:,1)) sum(weight*c(:,2 ))];%[mean(locs{1}) mean(locs{2})];
     centroid=[mean(obj_fixed.v(:,1)) mean(obj_fixed.v(:,2))];
     
     hold on
@@ -71,5 +72,5 @@ dist_treshold=0.2;
     plot(centroid(1),centroid(2),'or')
     plot(centroid(1),centroid(2),'xr')
     hold off
-    %hist(distances,100)
-%end
+    c=c_true;
+end
