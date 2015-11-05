@@ -13,4 +13,6 @@ Coming soon...
 <h2>To Do:</h2>
 <ul>
 <li>Insert non-rigid ICP</li>
+<li>Refactor code so helper function are not in a separate .m file</li>
+<li>Try to adhere to conventions</li>
 </ul>

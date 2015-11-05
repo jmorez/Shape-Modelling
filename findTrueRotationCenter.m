@@ -2,45 +2,26 @@ function c=findTrueRotationCenter(obj_moving,obj_fixed,dist_treshold)
     %This function will attempt to find the true center of rotation c by
     %using the knowledge of two point clouds that are know to succesfully
     %be registered to eachother
-    %% Apply rough outlining and ICP to find matching point pairs
+    %% Apply rough outlining and ICP to find matching point pairs                       
+    [moving_reg,TR,TT,cm,cf,fixed_rot]=roughRegistration(obj_fixed,obj_moving);
     
-    c=[];
+    T=TR*rotz(pi/4);
+    t=-TR*rotz(pi/4)*cm+TT+cf;
     
-    %Center objects
-    moving_c=centerPoints(obj_moving);
-    fixed_c=centerPoints(obj_fixed);
+    Rh=[T t; 0 0 0 1];
+    [V,~]=eigs(Rh);
+    ch=V(:,1);
+    c=real([ch(1) ch(2) ch(3)]); %We now know the direction of the rotation axis, now we can 
     
-    %Crop objects
-    moving_cr=cropObject(moving_c);
-    fixed_cr=cropObject(fixed_c);
     
-    %Rotate object roughly
-    theta=pi/4;
-    fixed_rot=rotateObjectZ(fixed_cr,pi/4);
-    
-    %Register objects
-    stride=8;
-    fprintf(1,'Starting fine registration with ICP. Subsampling with 1/%d th of all points. \n',stride);
-    
-    %Apply ICP
-    fixedvertices =fixed_rot.v(1:stride:end,1:3)';
-    movingvertices=moving_cr.v(1:stride:end,1:3)';
-
-    [TR,TT]=icp(fixedvertices,movingvertices,'Matching','kDtree',...
-                             'Normals',fixed_rot.vn(1:stride:end,1:3)',...
-                             'Minimize','plane',...
-                             'WorstRejection',0.4,...
-                             'Extrapolation',false);
-                         
-    moving_reg=rigidTransform(moving_cr,TR,TT);
-
     %% Find point pairs that are close enough (dist_treshold)
     disp('Matching point pairs and calculating true center...')
     stride=32; %Subsample
     fixedvertices =fixed_rot.v(1:stride:end,1:3);
     movingvertices=moving_reg.v(1:stride:end,1:3);
     
-    R=rotz(pi/4);
+    %R=rotz(pi/4);
+    R=rotV(c,pi/4);
     R=R(1:2,1:2);
     c=[];
     n=1;
@@ -61,10 +42,16 @@ function c=findTrueRotationCenter(obj_moving,obj_fixed,dist_treshold)
     weight=weight./(sum(weight));
     disp('Done!')
     %%
+    %Show point cloud from z direction
     [counts,locs]=hist3(obj_fixed.v(:,1:2),[100 100]);
-    %[counts,locs]=hist3(c,[100 100]);
     imagesc(locs{1},locs{2},counts)
+    
+    %Calculate true center
+    [counts,locs]=hist3(c,[100 100]);
+    %imagesc(locs{1},locs{2},counts)
     c_true=[sum(weight*c(:,1)) sum(weight*c(:,2 ))];%[mean(locs{1}) mean(locs{2})];
+    
+    %Calculate centroid for comparison
     centroid=[mean(obj_fixed.v(:,1)) mean(obj_fixed.v(:,2))];
     
     hold on

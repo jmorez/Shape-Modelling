@@ -4,21 +4,21 @@ function object=importOBJ(varargin)
         f=fopen(objfile);
         %Get file size, because preallocation *really* makes a difference now.
         fseek(f, 0, 'eof');
-        fileSize=ftell(f);
+        filesize=ftell(f);
         frewind(f);
         %# Read the whole file.
-        data=fread(f, fileSize, 'uint8');
+        data=fread(f, filesize, 'uint8');
         %# Count number of line-feeds.
-        numLines=sum(data==10);
+        numlines=sum(data==10);
         frewind(f)
 
         %Allocate return object. This is a bit overzealous in terms of size but
         %now we're sure we have enough storage (number of vertices/faces/...
         %will never exceed the number of lines, obviously).
-        object{k}=struct('v', zeros(numLines,3),...     %Vertex data
-                        'vt', zeros(numLines,2),...     %Vertex texture data
-                        'vn', zeros(numLines,3),...     %Vertex normal data
-                        'f' , zeros(numLines,4));       %Face data
+        object{k}=struct('v', zeros(numlines,3),...     %Vertex data
+                        'vt', zeros(numlines,2),...     %Vertex texture data
+                        'vn', zeros(numlines,3),...     %Vertex normal data
+                        'f' , zeros(numlines,4));       %Face data
         if f==-1
             fprintf(1, 'Failed to open "%s% \n', objfile);
         else
@@ -28,7 +28,7 @@ function object=importOBJ(varargin)
             %Needed for progress report              
             reverseStr='';
             %Check each line and copy data to the correct struct field.
-            for j=1:numLines
+            for j=1:numlines
                 line=fgetl(f);
                 if length(line) > 1
                     if strcmp(line(1:2),'v ')       
@@ -62,12 +62,12 @@ function object=importOBJ(varargin)
                 end
                 %Display progress occasionally
                 if mod(j,10000)==0
-                    msg = sprintf('importOBJ: %d of %d lines read from file "%s" \n', j, numLines, objfile);
+                    msg = sprintf('importOBJ: %d of %d lines read from file "%s" \n', j, numlines, objfile);
                     fprintf([reverseStr, msg]);
                     reverseStr = repmat(sprintf('\b'), 1, length(msg));
                 end
             end
-            msg = sprintf('importOBJ: %d of %d lines read from file "%s" \n', numLines, numLines, objfile);
+            msg = sprintf('importOBJ: %d of %d lines read from file "%s" \n', numlines, numlines, objfile);
             fprintf([reverseStr, msg]);
 
             %Remove trailing zeros.
@@ -83,3 +83,5 @@ end
 %Written by Jan Morez, 22/10/2015
 %Visielab, Antwerpen
 %jan.morez@gmail.com
+
+%The filesize part was found on stackexchange....
