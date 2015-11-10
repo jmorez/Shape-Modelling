@@ -1,17 +1,19 @@
-function c=findTrueRotationCenter(obj_moving,obj_fixed,dist_treshold)
+%function c=findTrueRotationCenter(obj_moving,obj_fixed,dist_treshold)
     %This function will attempt to find the true center of rotation c by
     %using the knowledge of two point clouds that are know to succesfully
     %be registered to eachother
+    obj_moving=objects_raw{1}; obj_fixed=objects_raw{2}; dist_treshold=0.5;
     %% Apply rough outlining and ICP to find matching point pairs                       
     [moving_reg,TR,TT,cm,cf,fixed_rot]=roughRegistration(obj_fixed,obj_moving);
     
-    T=TR*rotz(pi/4);
+    %% 
+    T=TR*rotz(pi/4); %TR Is already a pi/4 rotation, what's going on???
     t=-TR*rotz(pi/4)*cm+TT+cf;
     
     Rh=[T t; 0 0 0 1];
     [V,~]=eigs(Rh);
-    ch=V(:,1);
-    c=real([ch(1) ch(2) ch(3)]); %We now know the direction of the rotation axis, now we can 
+    ch=V(:,1);  
+    rot_axis=real([ch(1) ch(2) ch(3)]); %We now know the direction of the rotation axis, now we can 
     
     
     %% Find point pairs that are close enough (dist_treshold)
@@ -21,10 +23,13 @@ function c=findTrueRotationCenter(obj_moving,obj_fixed,dist_treshold)
     movingvertices=moving_reg.v(1:stride:end,1:3);
     
     %R=rotz(pi/4);
-    R=rotV(c,pi/4);
+    R=rotV(rot_axis,pi/4);
     R=R(1:2,1:2);
     c=[];
     n=1;
+    
+    %
+    reverseStr='';
     for j=1:length(fixedvertices)
         point=movingvertices(j,:);
         [idx,distance]=findNearestNeighbors(pointCloud(fixedvertices),point,1);
@@ -36,7 +41,7 @@ function c=findTrueRotationCenter(obj_moving,obj_fixed,dist_treshold)
             n=n+1;
         end
         if(mod(j,round(length(fixedvertices)/100))==0)
-            fprintf(1,'%d %% \n',round(100*j/length(fixedvertices)));
+            reverseStr=reportToConsole('%d %% \n', reverseStr, round(100*j/length(fixedvertices)));
         end
     end
     weight=weight./(sum(weight));
@@ -60,4 +65,4 @@ function c=findTrueRotationCenter(obj_moving,obj_fixed,dist_treshold)
     plot(centroid(1),centroid(2),'xr')
     hold off
     c=c_true;
-end
+%end

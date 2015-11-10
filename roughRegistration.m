@@ -12,7 +12,7 @@ function [obj_registered,TR,TT,cm,cf,fixed_rot]=roughRegistration(obj_fixed,obj_
     [moving_cr]=cropObject(moving_c);
     [fixed_cr]=cropObject(fixed_c);
     
-    %Rotate object roughly
+    %Rotate object roughly NOTE: why fixed??? 
     theta=pi/4;
     fixed_rot=rotateObjectZ(fixed_cr,theta);
     
@@ -27,8 +27,9 @@ function [obj_registered,TR,TT,cm,cf,fixed_rot]=roughRegistration(obj_fixed,obj_
     [TR,TT]=icp(fixedvertices,movingvertices,'Matching','kDtree',...
                              'Normals',fixed_rot.vn(1:stride:end,1:3)',...
                              'Minimize','plane',...
-                             'WorstRejection',0.4,...
-                             'Extrapolation',false);
+                             'WorstRejection',0.2,... %0.4
+                             'Extrapolation',false);%,...
+                             %'iter',300);  %off
                          
     obj_registered=rigidTransform(moving_cr,TR,TT);
 end

@@ -8,7 +8,7 @@
 </ul>
 
 <h2>Description of each script</h2>
-Coming soon...
+Coming soon (or look for comments inside the code)...
 
 <h2>To Do:</h2>
 <ul>
