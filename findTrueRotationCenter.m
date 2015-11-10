@@ -5,12 +5,15 @@
     obj_moving=objects_raw{1}; obj_fixed=objects_raw{2}; dist_treshold=0.5;
     %% Apply rough outlining and ICP to find matching point pairs                       
     [moving_reg,TR,TT,cm,cf,fixed_rot]=roughRegistration(obj_fixed,obj_moving);
-    
-    %% 
+     
+    %Calculate the general transformation and translation
     T=TR*rotz(pi/4); %TR Is already a pi/4 rotation, what's going on???
     t=-TR*rotz(pi/4)*cm+TT+cf;
     
+    %Use these to set up a homogeneous transformation.
     Rh=[T t; 0 0 0 1];
+    
+    %Find the eigenvector (~rotation axis direction). 
     [V,~]=eigs(Rh);
     ch=V(:,1);  
     rot_axis=real([ch(1) ch(2) ch(3)]); %We now know the direction of the rotation axis, now we can 
@@ -24,7 +27,7 @@
     
     %R=rotz(pi/4);
     R=rotV(rot_axis,pi/4);
-    R=R(1:2,1:2);
+    %R=R(1:2,1:2);
     c=[];
     n=1;
     
@@ -36,7 +39,7 @@
         
        %Use the original coordinates!!!
         if distance < dist_treshold
-            c(n,1:2)=(eye(2,2)-R)\(obj_fixed.v(stride*idx,1:2)'-R*obj_moving.v(stride*j,1:2)');
+            c(n,1:3)=(eye(3,3)-R)\(obj_fixed.v(stride*idx,1:3)'-R*obj_moving.v(stride*j,1:3)');
             weight(n)=distance;
             n=n+1;
         end
@@ -47,22 +50,37 @@
     weight=weight./(sum(weight));
     disp('Done!')
     %%
-    %Show point cloud from z direction
-    [counts,locs]=hist3(obj_fixed.v(:,1:2),[100 100]);
-    imagesc(locs{1},locs{2},counts)
+    compareObj(obj_moving,obj_fixed);
+    n=length(c);
+ 
+    cx=c(:,1);
+    cy=c(:,2);
+    cz=c(:,3);
     
-    %Calculate true center
-    [counts,locs]=hist3(c,[100 100]);
-    %imagesc(locs{1},locs{2},counts)
-    c_true=[sum(weight*c(:,1)) sum(weight*c(:,2 ))];%[mean(locs{1}) mean(locs{2})];
+    rx=repmat(rot_axis(1),n,1);
+    ry=repmat(rot_axis(2),n,1);
+    rz=repmat(rot_axis(3),n,1);
     
-    %Calculate centroid for comparison
-    centroid=[mean(obj_fixed.v(:,1)) mean(obj_fixed.v(:,2))];
-    
-    hold on
-    plot(c_true(1),c_true(2),'ow');
-    plot(centroid(1),centroid(2),'or')
-    plot(centroid(1),centroid(2),'xr')
+    hold on;
+    quiver3(cx,cy,cz,rx,ry,rz,10)
     hold off
-    c=c_true;
+    
+%     %Show point cloud from z direction
+%     [counts,locs]=hist3(obj_fixed.v(:,1:2),[100 100]);
+%     imagesc(locs{1},locs{2},counts)
+%     
+%     %Calculate true center
+%     [counts,locs]=hist3(c,[100 100]);
+%     %imagesc(locs{1},locs{2},counts)
+%     c_true=[sum(weight*c(:,1)) sum(weight*c(:,2 ))];%[mean(locs{1}) mean(locs{2})];
+%     
+%     %Calculate centroid for comparison
+%     centroid=[mean(obj_fixed.v(:,1)) mean(obj_fixed.v(:,2))];
+%     
+%     hold on
+%     plot(c_true(1),c_true(2),'ow');
+%     plot(centroid(1),centroid(2),'or')
+%     plot(centroid(1),centroid(2),'xr')
+%     hold off
+%     c=c_true;
 %end
