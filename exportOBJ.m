@@ -38,7 +38,9 @@ function exportOBJ(object,file)
         end
         
         for j=1:length(object.f)
-            fprintf(f,'f %d %d %d %d \n',object.f(j,:));
+            %fprintf(f,'f %d %d %d %d \n',object.f(j,:));
+            fprintf(f,'f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d \n', ...
+                    kron(object.f(j,:),[1 1 1]));
             %Display progress
             if mod(j,round(length(object.vn)/100))==0
                 msg = sprintf('exportOBJ: %d of %d faces written.\n', j,length(object.vn));

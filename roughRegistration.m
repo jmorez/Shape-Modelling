@@ -5,8 +5,8 @@ function [obj_registered,TR,TT,cm,cf,moving_rot]=roughRegistration(obj_fixed,obj
     %cf: centroid of fixed object
     
     %Center objects so we can rotate them.
-    [moving_c,cm]=centerPoints(obj_moving);
-    [fixed_c,cf] =centerPoints(obj_fixed);
+    [moving_c,cm]=centerObj(obj_moving);
+    [fixed_c,cf] =centerObj(obj_fixed);
     
     %Crop objects
     moving_cr=cropObject(moving_c);

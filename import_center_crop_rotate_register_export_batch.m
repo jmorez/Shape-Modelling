@@ -17,7 +17,7 @@ for m=1:length(input_dirs)
     for j=1:length(files)
         [~,file,ext]=fileparts(files(j).name);
         if ~files(j).isdir && strcmp(ext,'.obj')
-            objects_raw{n+1}=importOBJ(strcat(input_dir,'/',files(j).name));
+            objects_raw{n+1}=importObj(strcat(input_dir,'/',files(j).name));
             n=n+1;  
         end 
     end
@@ -30,7 +30,7 @@ for m=1:length(input_dirs)
     disp('Starting rough registration:');
     disp('Centering...')
     for j=1:n
-        objects_centered{j}=centerPoints(objects_raw{j});
+        objects_centered{j}=centerObj(objects_raw{j});
         fprintf(1,'Centered %d of %d. \n',j,n);
     end
 

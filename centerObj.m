@@ -1,4 +1,4 @@
-function [object_centered, center]=centerPoints(object)
+function [object_centered, center]=centerObj(object)
     %Calculate the centroid
     center=[mean(object.v(:,1)) mean(object.v(:,2)) mean(object.v(:,3))]';
     

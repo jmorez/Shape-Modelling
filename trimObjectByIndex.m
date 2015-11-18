@@ -7,7 +7,7 @@ function object_trimmed=trimObjectByIndex(object,flag)
     %Draw an indexed array and remove an entry to intuitively see this
     %correspondence.
     mapping=cumsum(flag);
-    n=length(object.v);
+    %n=length(object.v);
     
     %Remove all vertices that were flagged
     object_trimmed.v =object.v(logical(flag),:);
@@ -16,7 +16,7 @@ function object_trimmed=trimObjectByIndex(object,flag)
     
     %Extract quad indices for remapping, switch to one-based indexing so we
     %can apply the mapping easily.
-    facedata=object.f(:,1:4);
+    facedata=object.f(:,1:4)+1;
     newfacedata=zeros(size(facedata));  
     
     %Remap, if the quad references a deleted point, remove it altogether.
@@ -30,7 +30,7 @@ function object_trimmed=trimObjectByIndex(object,flag)
                 keepface(j)=0;
             end
     end
-    object_trimmed.f(:,1:4)=newfacedata(logical(keepface),1:4);
+    object_trimmed.f(:,1:4)=newfacedata(logical(keepface),1:4)-1;
 end
 
 %Written by Jan Morez, 22/10/2015

@@ -15,4 +15,7 @@ Coming soon (or look for comments inside the code)...
 <li>Insert non-rigid ICP</li>
 <li>Refactor code so helper function are not in a separate .m file</li>
 <li>Try to adhere to conventions</li>
+<li>Improve rough registration</li>
+<li>Bruteforce rotation axis search, compare with findTrueRotationCenter</li>
+<li>Perhaps remove data so the PCA analysis is more accurate? </li>
 </ul>

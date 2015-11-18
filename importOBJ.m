@@ -1,27 +1,29 @@
 function object=importOBJ(varargin)
+%NOTE: this function also switches a few axes (see line 37)!!!
     for k=1:length(varargin)
         objfile=backward2ForwardSlash(varargin{k});
         f=fopen(objfile);
-        %Get file size, because preallocation *really* makes a difference now.
-        fseek(f, 0, 'eof');
-        filesize=ftell(f);
-        frewind(f);
-        %# Read the whole file.
-        data=fread(f, filesize, 'uint8');
-        %# Count number of line-feeds.
-        numlines=sum(data==10);
-        frewind(f)
-
-        %Allocate return object. This is a bit overzealous in terms of size but
-        %now we're sure we have enough storage (number of vertices/faces/...
-        %will never exceed the number of lines, obviously).
-        object{k}=struct('v', zeros(numlines,3),...     %Vertex data
-                        'vt', zeros(numlines,2),...     %Vertex texture data
-                        'vn', zeros(numlines,3),...     %Vertex normal data
-                        'f' , zeros(numlines,4));       %Face data
         if f==-1
             fprintf(1, 'Failed to open "%s% \n', objfile);
         else
+            %Get file size, because preallocation *really* makes a difference now.
+            fseek(f, 0, 'eof');
+            filesize=ftell(f);
+            frewind(f);
+            %# Read the whole file.
+            data=fread(f, filesize, 'uint8');
+            %# Count number of line-feeds.
+            numlines=sum(data==10);
+            frewind(f)
+
+            %Allocate return object. This is a bit overzealous in terms of size but
+            %now we're sure we have enough storage (number of vertices/faces/...
+            %will never exceed the number of lines, obviously).
+            object{k}=struct('v', zeros(numlines,3),...     %Vertex data
+                            'vt', zeros(numlines,2),...     %Vertex texture data
+                            'vn', zeros(numlines,3),...     %Vertex normal data
+                            'f' , zeros(numlines,4));       %Face data
+        
             %Count all types included in the obj file. This can easily be
             %extended.
             nv=1; nvt=1; nvn=1; nf=1;
@@ -34,6 +36,7 @@ function object=importOBJ(varargin)
                     if strcmp(line(1:2),'v ')       
                         line_parsed=textscan(line, 'v %f %f %f');
                         object{k}.v(nv,1:3)=[line_parsed{3}  line_parsed{2} -line_parsed{1}];
+                        %object{k}.v(nv,1:3)=[-line_parsed{1}  line_parsed{2} line_parsed{3}]; %This one for 141 data set, INELEGANT
                         nv=nv+1;
                     elseif strcmp(line(1:2),'vt')   
                         line_parsed=textscan(line, 'vt %f %f');
@@ -45,18 +48,18 @@ function object=importOBJ(varargin)
                         nvn=nvn+1;
                     elseif strcmp(line(1), 'f')
                         line_parsed=regexp(line,'f (\d+)/(\d+)/(\d+) (\d+)/(\d+)/(\d+) (\d+)/(\d+)/(\d+) (\d+)/(\d+)/(\d+)','tokens');
-                        line_parsed=line_parsed{1};
-                        if isnan(str2double(line_parsed{1})) || isnan(str2double(line_parsed{2})) || isnan(str2double(line_parsed{3})) || isnan(str2double(line_parsed{4}))
-                            [str2double(line_parsed{1})... 
-                                            str2double(line_parsed{4})...
-                                            str2double(line_parsed{7})... 
-                                            str2double(line_parsed{10})];
+                        if length(line_parsed)~=0
+                            line_parsed=line_parsed{1};
+                            if isnan(str2double(line_parsed{1})) || isnan(str2double(line_parsed{2})) || isnan(str2double(line_parsed{3})) || isnan(str2double(line_parsed{4}))                            
+                            object{k}.f(nf,1:4)=  [str2double(line_parsed{1})... 
+                                                str2double(line_parsed{4})...
+                                                str2double(line_parsed{7})... 
+                                                str2double(line_parsed{10})];
+                            end
+                        else
+                            line_parsed=textscan(line, 'f %f %f %f %f');
+                            object{k}.f(nf,1:4)=[line_parsed{1} line_parsed{2} line_parsed{3} line_parsed{4}];
                         end
-                        object{k}.f(nf,1:4)=  [str2double(line_parsed{1})... 
-                                            str2double(line_parsed{4})...
-                                            str2double(line_parsed{7})... 
-                                            str2double(line_parsed{10})];
-
                         nf=nf+1;
                     end
                 end
