@@ -64,14 +64,12 @@ function object=importOBJ(varargin)
                     end
                 end
                 %Display progress occasionally
-                if mod(j,10000)==0
+                if mod(j,1000)==0 || j==numlines
                     msg = sprintf('importOBJ: %d of %d lines read from file "%s" \n', j, numlines, objfile);
                     fprintf([reverseStr, msg]);
                     reverseStr = repmat(sprintf('\b'), 1, length(msg));
                 end
             end
-            msg = sprintf('importOBJ: %d of %d lines read from file "%s" \n', numlines, numlines, objfile);
-            fprintf([reverseStr, msg]);
 
             %Remove trailing zeros.
             object{k}.v =object{k}.v(1:(nv-1),:);
@@ -87,4 +85,4 @@ end
 %Visielab, Antwerpen
 %jan.morez@gmail.com
 
-%The filesize part was found on stackexchange....
+%Note: the filesize part was found on stackexchange...
