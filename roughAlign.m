@@ -17,8 +17,8 @@ function [moving_aligned,roughAlignInfo]=roughAlign(fixed_obj,moving_obj)
     B_fixed=pca(fixed_obj.v, 'Centered',true);
 
     %Find the center of mass
-    [~,cm]=centerObj(moving_obj);
-    [~,cf]=centerObj(fixed_obj);
+    [~,mc]=centerObj(moving_obj);
+    [~,fc]=centerObj(fixed_obj);
         
     %Rotation about first principal component (z_moving gets rotated
     %into z_fixed by rotating in a plane perpendicular to both). This will
@@ -42,11 +42,10 @@ function [moving_aligned,roughAlignInfo]=roughAlign(fixed_obj,moving_obj)
     angle=acos((y_moving'*y_fixed)/(norm(y_moving)*norm(y_fixed)));
     R2=rotV(f_z, -angle);
     R=R2*R1;
-    moving_aligned=rigidTransform(centerObj(moving_obj), R2*R1,(cm-cf), ...
-                                  centerObj(fixed_obj));
+    moving_aligned=rigidTransform(centerObj(moving_obj), R2*R1,(mc-fc));
                                 
-    roughAlignInfo=struct('mPca', B_moving, 'fPca', B_fixed, ...
-                          'cm', cm,'cf', cf,'R', R, 't', cm-cf);
+    roughAlignInfo=struct('mPca', B_moving, 'fPca', B_fixed, 'mPcaT',R*B_moving,...
+                          'mc', mc,'fc', fc,'R', R, 't', mc-fc);
 end
 
 %Written by Jan Morez

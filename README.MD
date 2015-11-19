@@ -18,4 +18,5 @@ Coming soon (or look for comments inside the code)...
 <li>Improve rough registration</li>
 <li>Bruteforce rotation axis search, compare with findTrueRotationCenter</li>
 <li>Perhaps remove data so the PCA analysis is more accurate? </li>
+<li>Idea: use PCA alignment only for the z-axis, then apply the pi/2 rotation</li>
 </ul>
