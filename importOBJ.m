@@ -1,4 +1,4 @@
-function object=importOBJ(varargin)
+function object=importObj(varargin)
 %NOTE: this function also switches a few axes (see line 37)!!!
     for k=1:length(varargin)
         objfile=backward2ForwardSlash(varargin{k});
@@ -77,6 +77,10 @@ function object=importOBJ(varargin)
             object{k}.vn=object{k}.vn(1:(nvn-1),:);
             object{k}.f =object{k}.f(1:(nf-1),:);
             fclose(f);
+            
+            if length(varargin)==1
+                object=object{1};
+            end
         end
     end
 end

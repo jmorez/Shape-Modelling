@@ -15,7 +15,7 @@ function c=findRotationCenterBruteForce(a_obj,b_obj,searchradius,resolution)
     [counts,locs]=hist3(a_obj.v(:,1:2),[100 100]);
     mask=sqrt((x-c_guess(1)).^2+(y-c_guess(2)).^2)<searchradius;
     %imagesc(locs{2},locs{1},counts.*mask); 
-    imagesc(mask)
+    imagesc(locs{1},locs{2},imfuse(imresize(mask,size(counts)),counts'))
    
     axis image
 end
