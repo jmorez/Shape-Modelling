@@ -13,8 +13,8 @@ function [moving_aligned,roughAlignInfo]=roughAlign(fixed_obj,moving_obj)
     
     %Find the principal components. These are 3 x 3 matrices with each
     %column a basis vector.   
-    B_moving=pca(moving_obj.v, 'Centered',true);
-    B_fixed=pca(fixed_obj.v, 'Centered',true);
+    B_moving=real(pca(moving_obj.v, 'Centered',true));
+    B_fixed=real(pca(fixed_obj.v, 'Centered',true));
 
     %Find the center of mass
     [~,mc]=centerObj(moving_obj);
@@ -42,7 +42,7 @@ function [moving_aligned,roughAlignInfo]=roughAlign(fixed_obj,moving_obj)
     angle=acos((y_moving'*y_fixed)/(norm(y_moving)*norm(y_fixed)));
     R2=rotV(f_z, -angle);
     R=R2*R1;
-    moving_aligned=rigidTransform(centerObj(moving_obj), R2*R1,(mc-fc));
+    moving_aligned=rigidTransform(centerObj(moving_obj), real(R1),(mc-fc)); %SHOULD BE R2*R1, but for now I just want to align the z axes
                                 
     roughAlignInfo=struct('mPca', B_moving, 'fPca', B_fixed, 'mPcaT',R*B_moving,...
                           'mc', mc,'fc', fc,'R', R, 't', mc-fc);

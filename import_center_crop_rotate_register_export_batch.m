@@ -1,8 +1,10 @@
+%% Input Directories 
 base_dir='C:/Users/Jan Morez/Documents/Data/';
 
 %input_dirs={'113','129','131','133','134','137','141','145','149','150','152','154','100'};
-input_dirs={'113'};
+input_dirs={'131'};
 
+%% 
 for m=1:length(input_dirs)
     %% 1. Import .grid files from <input_dir>. NOTE: use forward slashes!
     input_dir=strcat(base_dir,input_dirs{m});%'C:/Users/Jan Morez/Documents/Data/131';
@@ -26,26 +28,22 @@ for m=1:length(input_dirs)
         return
     end
     
-    %% 2. Center 
-    disp('Starting rough registration:');
-    disp('Centering...')
-    for j=1:n
-        objects_centered{j}=centerObj(objects_raw{j});
-        fprintf(1,'Centered %d of %d. \n',j,n);
+    %% 3. Rough aligning (centering & aligning z-axes), then transforming all aligned axes to be aligned with z=[0 0 1]
+    objects_roughly_aligned=objects_raw;
+    reverseStr='';
+    for j=1:n 
+        reverseStr=reportToConsole('Roughly aligning %d of %d. \n',reverseStr,j,n);
+        for k=1:(j-1)
+            objects_roughly_aligned{k}=roughAlign(objects_roughly_aligned{k+1},objects_roughly_aligned{k});
+        end
     end
-
-    %% 3. Crop
-    for j=1:n
-        fprintf(1,'Cropping %d of %d. \n',j,n);
-        objects_cropped{j}=cropObject(objects_centered{j});
-    end
-
+    disp('Done!')
     %% 4. Rotate
     theta=pi/4;
-    objects_rotated{1}=objects_cropped{1};
+    objects_rotated{1}=objects_roughly_aligned{1};
     for j=2:n
         fprintf(1,'Rotating %d of %d. \n',j,n);
-        objects_rotated{j}=rotateObjectZ(objects_cropped{j},theta*(j-1));
+        objects_rotated{j}=rotateObjectZ(centerObj(objects_roughly_aligned{j}),theta*(j-1));
     end
 
     %% 5. Remove bad quads based on their skewness.

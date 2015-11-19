@@ -1,7 +1,7 @@
 %This script will search for folders with some triple-decimal name, look in
 %the subfolders for all .obj files and put them neatly in a folder called
 %'ordered'. 
-searchdir='C:\Users\Jan Morez\Documents\Data - Copy';
+searchdir='C:\Users\Jan Morez\Documents\Data\81';
 result=rdir([searchdir,'\**\*.obj']);
 
 %Find all unique base directories
