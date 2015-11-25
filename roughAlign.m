@@ -3,8 +3,8 @@ function [moving_aligned,roughAlignInfo]=roughAlign(fixed_obj,moving_obj)
     %contains:
     
     %mPca: principal components of the moving object (3 x 3 matrix with
-    %each column the direction of a principal component.
-    %fPca: see mPca but for the fixed object.
+    %each column the direction of a principal component).
+    %fPca: see mPca, but for the fixed object.
     %cm: the center of mass of the moving object
     %cf: see above
     %R: the rotation that transforms mPca into fPca
@@ -23,12 +23,12 @@ function [moving_aligned,roughAlignInfo]=roughAlign(fixed_obj,moving_obj)
     %Rotation about first principal component (z_moving gets rotated
     %into z_fixed by rotating in a plane perpendicular to both). This will
     %let the xy-planes of both bases coincide. 
-    m_z=B_moving(:,1);
-    f_z=B_fixed(:,1);
+    zm=B_moving(:,1);
+    zf=B_fixed(:,1);
     %Find the angle between both axes
-    angle=acos((m_z'*f_z)/(norm(m_z)*norm(f_z)));
+    angle=acos((zm'*zf)/(norm(zm)*norm(zf)));
     %Set up rotation matrix
-    R1=rotV(cross(m_z,f_z), angle);
+    R1=rotV(cross(zm,zf), angle);
     
     %Transform
     B1=R1*B_moving;   
@@ -40,9 +40,9 @@ function [moving_aligned,roughAlignInfo]=roughAlign(fixed_obj,moving_obj)
     y_fixed=B_fixed(:,2);
     
     angle=acos((y_moving'*y_fixed)/(norm(y_moving)*norm(y_fixed)));
-    R2=rotV(f_z, -angle);
+    R2=rotV(zf, -angle);
     R=R2*R1;
-    moving_aligned=rigidTransform(centerObj(moving_obj), real(R1),(mc-fc)); %SHOULD BE R2*R1, but for now I just want to align the z axes
+    moving_aligned=rigidTransform(centerObj(moving_obj), real(R1),[0 0 0]); %SHOULD BE R2*R1, but for now I just want to align the z axes
                                 
     roughAlignInfo=struct('mPca', B_moving, 'fPca', B_fixed, 'mPcaT',R*B_moving,...
                           'mc', mc,'fc', fc,'R', R, 't', mc-fc);

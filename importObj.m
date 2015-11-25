@@ -4,7 +4,7 @@ function object=importObj(varargin)
         objfile=backward2ForwardSlash(varargin{k});
         f=fopen(objfile);
         if f==-1
-            fprintf(1, 'Failed to open "%s% \n', objfile);
+            fprintf(1, 'importObj: failed to open "%s% \n', objfile);
         else
             %Get file size, because preallocation *really* makes a difference now.
             fseek(f, 0, 'eof');
@@ -47,25 +47,33 @@ function object=importObj(varargin)
                         object{k}.vn(nvn,1:3)=[line_parsed{3}  line_parsed{2} -line_parsed{1}];
                         nvn=nvn+1;
                     elseif strcmp(line(1), 'f')
-                        line_parsed=regexp(line,'f (\d+)/(\d+)/(\d+) (\d+)/(\d+)/(\d+) (\d+)/(\d+)/(\d+) (\d+)/(\d+)/(\d+)','tokens');
-                        if length(line_parsed)~=0
-                            line_parsed=line_parsed{1};
-                            if isnan(str2double(line_parsed{1})) || isnan(str2double(line_parsed{2})) || isnan(str2double(line_parsed{3})) || isnan(str2double(line_parsed{4}))                            
-                            object{k}.f(nf,1:4)=  [str2double(line_parsed{1})... 
-                                                str2double(line_parsed{4})...
-                                                str2double(line_parsed{7})... 
-                                                str2double(line_parsed{10})];
-                            end
+                        line_parsed=textscan(line,'f %f/%f/%f %f/%f/%f %f/%f/%f %f/%f/%f');
+                        %Face data can be of the form "f v1/v1/v1/v1
+                        %v2/v2/v2/v2 v3/v3/v3/v3 v4/v4/v4/v4". Try this
+                        %first.
+                        if ~isempty(line_parsed{1}) && ~isempty(line_parsed{4}) && ~isempty(line_parsed{7}) && ~isempty(line_parsed{10})
+                            %if isnan(str2double(line_parsed{1})) || isnan(str2double(line_parsed{4})) || isnan(str2double(line_parsed{7})) || isnan(str2double(line_parsed{10}))                            
+                            object{k}.f(nf,1:4)=  [line_parsed{1}... 
+                                                line_parsed{4}...
+                                                line_parsed{7}... 
+                                                line_parsed{10}];
+                        %If that fails, try "f v1/v2/v3/v4"
                         else
                             line_parsed=textscan(line, 'f %f %f %f %f');
-                            object{k}.f(nf,1:4)=[line_parsed{1} line_parsed{2} line_parsed{3} line_parsed{4}];
+                            if isempty(line_parsed{1}) || isempty(line_parsed{4}) || isempty(line_parsed{7}) || isempty(line_parsed{10})
+                                object{k}.f(nf,1:4)=[line_parsed{1} line_parsed{2} line_parsed{3} line_parsed{4}];
+                            else
+                                fprintf(1,'importObj: failed to read line %d: %s \n',line);
+                                return
+                            end
                         end
+                        %Count the number of faces
                         nf=nf+1;
                     end
                 end
                 %Display progress occasionally
                 if mod(j,1000)==0 || j==numlines
-                    msg = sprintf('importOBJ: %d of %d lines read from file "%s" \n', j, numlines, objfile);
+                    msg = sprintf('importObj: %d of %d lines read from file "%s" \n', j, numlines, objfile);
                     fprintf([reverseStr, msg]);
                     reverseStr = repmat(sprintf('\b'), 1, length(msg));
                 end

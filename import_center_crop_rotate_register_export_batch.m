@@ -2,17 +2,17 @@
 base_dir='C:/Users/Jan Morez/Documents/Data/';
 
 %input_dirs={'113','129','131','133','134','137','141','145','149','150','152','154','100'};
-input_dirs={'131'};
+input_dirs={'109'};
 
 %% 
 for m=1:length(input_dirs)
     %% 1. Import .grid files from <input_dir>. NOTE: use forward slashes!
     input_dir=strcat(base_dir,input_dirs{m});%'C:/Users/Jan Morez/Documents/Data/131';
-    outputdir=strcat('C:/Users/Guest/Desktop/RigideRegistratie/',input_dirs{m});
-    
+    %outputdir=strcat('C:/Users/Guest/Desktop/RigideRegistratie/',input_dirs{m});
+    outputdir=strcat('C:\Users\Jan Morez\Documents\',input_dirs{m});
     fprintf(1,'Processing %s . \n',input_dir);
     
-    %% Import all files found in input_dir
+    % Import all files found in input_dir
     n=0; %File counter
     files=dir(input_dir);
     disp('Importing files...')
@@ -37,6 +37,11 @@ for m=1:length(input_dirs)
             objects_roughly_aligned{k}=roughAlign(objects_roughly_aligned{k+1},objects_roughly_aligned{k});
         end
     end
+    %The last object should just be centered, not aligned as all the other
+    %objects are aligned to it. 
+    %Suggestion: align with the absolute z-axis!
+    objects_roughly_aligned{n}=centerObj(objects_raw{n});
+    
     disp('Done!')
     %% 4. Rotate
     theta=pi/4;
@@ -85,7 +90,7 @@ for m=1:length(input_dirs)
         end
         fprintf(1,'Registered %d out of %d. \n',j,n-1);
     end
-
+    disp('Done!')
       %% 7. Non-rigid ICP
 %     objects_nrregistered=objects_registered;
 %     for j=1:(n-1)
