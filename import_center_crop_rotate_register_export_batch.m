@@ -41,8 +41,8 @@ for m=1:length(input_dirs)
     %objects are aligned to it. 
     %Suggestion: align with the absolute z-axis!
     objects_roughly_aligned{n}=centerObj(objects_raw{n});
-    
     disp('Done!')
+    
     %% 4. Rotate
     theta=pi/4;
     objects_rotated{1}=objects_roughly_aligned{1};

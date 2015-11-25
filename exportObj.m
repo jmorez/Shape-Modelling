@@ -1,4 +1,5 @@
 function exportObj(object,file)
+    file=backward2ForwardSlash(file);
     f=fopen(file,'w');
     if f==-1
         fprintf(1,'Unable to write to %s. \n',file);
