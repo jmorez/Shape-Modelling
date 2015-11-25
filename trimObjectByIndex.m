@@ -16,7 +16,7 @@ function object_trimmed=trimObjectByIndex(object,flag)
     
     %Extract quad indices for remapping, switch to one-based indexing so we
     %can apply the mapping easily.
-    facedata=object.f(:,1:4)+1;
+    facedata=object.f(:,1:4);
     newfacedata=zeros(size(facedata));  
     
     %Remap, if the quad references a deleted point, remove it altogether.
@@ -30,7 +30,7 @@ function object_trimmed=trimObjectByIndex(object,flag)
                 keepface(j)=0;
             end
     end
-    object_trimmed.f(:,1:4)=newfacedata(logical(keepface),1:4)-1;
+    object_trimmed.f(:,1:4)=newfacedata(logical(keepface),1:4);
 end
 
 %Written by Jan Morez, 22/10/2015

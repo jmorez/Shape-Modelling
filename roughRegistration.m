@@ -8,7 +8,7 @@ function [obj_registered,TR,TT,cm,cf,moving_rot]=roughRegistration(obj_fixed,obj
     [moving_c,cm]=centerObj(obj_moving);
     [fixed_c,cf] =centerObj(obj_fixed);
     
-    %Crop objects
+    %Crop objects (not entirely necessary)
     moving_cr=cropObject(moving_c);
     fixed_cr=cropObject(fixed_c);
     
