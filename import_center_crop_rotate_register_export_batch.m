@@ -119,7 +119,7 @@ for m=1:length(input_dirs)
     for j=1:n
         file=strcat(outputdir,'/',num2str(j),'.obj');
         %exportOBJ(objects_nrregistered{j},file);
-        exportOBJ(objects_registered{j},file);
+        exportObj(objects_registered{j},file);
     end
     %Something weird happens to this variable when opening a single
     %folder...
