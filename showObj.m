@@ -13,4 +13,5 @@ function showObj(object,varargin)
         end
         hold off
     end
+    cameratoolbar('ResetCamera');
 end

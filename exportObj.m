@@ -14,7 +14,7 @@ function exportObj(object,file)
             fprintf(f,'v %f %f %f \n',object.v(j,:));
             %Display progress
             if mod(j,round(length(object.v)/100))==0
-                msg = sprintf('exportOBJ: %d of %d vertices written.\n', j,length(object.v));
+                msg = sprintf('exportObj: %d of %d vertices written.\n', j,length(object.v));
                 fprintf([reverseStr, msg]);
                 reverseStr = repmat(sprintf('\b'), 1, length(msg));
             end
@@ -23,7 +23,7 @@ function exportObj(object,file)
             fprintf(f,'vt %f %f \n',object.vt(j,:));
             %Display progress
             if mod(j,round(length(object.vt)/100))==0
-                msg = sprintf('exportOBJ: %d of %d vertex texture coordinates written.\n', j,length(object.vt));
+                msg = sprintf('exportObj: %d of %d vertex texture coordinates written.\n', j,length(object.vt));
                 fprintf([reverseStr, msg]);
                 reverseStr = repmat(sprintf('\b'), 1, length(msg));
             end
@@ -32,7 +32,7 @@ function exportObj(object,file)
         for j=1:length(object.vn)
             fprintf(f,'vn %f %f %f \n',object.vn(j,:));
             if mod(j,round(length(object.vn)/100))==0
-                msg = sprintf('exportOBJ: %d of %d vertex normals written.\n', j,length(object.vn));
+                msg = sprintf('exportObj: %d of %d vertex normals written.\n', j,length(object.vn));
                 fprintf([reverseStr, msg]);
                 reverseStr = repmat(sprintf('\b'), 1, length(msg));
             end
@@ -44,7 +44,7 @@ function exportObj(object,file)
                     kron(object.f(j,:),[1 1 1]));
             %Display progress
             if mod(j,round(length(object.vn)/100))==0
-                msg = sprintf('exportOBJ: %d of %d faces written.\n', j,length(object.vn));
+                msg = sprintf('exportObj: %d of %d faces written.\n', j,length(object.vn));
                 fprintf([reverseStr, msg]);
                 reverseStr = repmat(sprintf('\b'), 1, length(msg));
             end
