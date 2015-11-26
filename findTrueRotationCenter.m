@@ -2,34 +2,28 @@
     %This function will attempt to find the true center of rotation c by
     %using the knowledge of two point clouds that are know to succesfully
     %be registered to eachother
-    dist_treshold=0.5;
-    %Test case
-    disp('Setting up test case...')
-    %Generate a random displacement for the true (normally unknown)
-    %rotation center.
-    c_true=[-200 50 0];
-    moving_test=rigidTransform(objects_raw{1},eye(3,3),-c_true);
-    %Rotate with 45 degrees around this center
-    moving_test=rigidTransform(moving_test,rotz(pi/4),c_true);
-   %% 
-    compareObj(objects_raw{1},moving_test);
-    obj_moving=objects_raw{1}; obj_fixed=moving_test;
-    disp('Done!')
+    dist_treshold=5;
+
+
     %% 
     %obj_moving=objects_raw{1}; obj_fixed=rigidTransform(objects_raw{1},rotz(pi/4),c_true); dist_treshold=0.5;
+    obj_moving=objects_raw{1}; obj_fixed=objects_raw{2};
+    
+       %% 
+    %compareObj(objects_raw{1},moving_test);
     %% Apply rough outlining and ICP to find matching point pairs   
-    %Note: perhaps not put this in a function, it's confusing af...
-    %[moving_reg,TR,TT,cm,cf,fixed_rot]=roughRegistration(obj_fixed,obj_moving);
     disp('Starting rough registration');
     
     %Find centroids
     [moving_centered,cm]=centerObj(obj_moving);
     [fixed_centered,cf]=centerObj(obj_fixed);
+    
     %Rotate 45 degrees to prepare for ICP
-    moving_rot=rigidTransform(moving_centered,rotz(pi/4),[0 0 0]);
+    moving_rot=rigidTransform(moving_centered,rotz(-pi/4),[0 0 0]);
+    
     %% 
     %compareObj(rigidTransform(moving_rot,eye(3,3),[1 1 1]),fixed_centered);
-    compareObj(moving_rot,fixed_centered);
+    %compareObj(moving_rot,fixed_centered);
 
     %% Find ICP transformations
     disp('ICP')
@@ -38,15 +32,15 @@
                              'Matching','kDtree',...
                              'Normals',fixed_centered.vn(1:stride:end,1:3)',...
                              'Minimize','plane',...
-                             'WorstRejection',0.5,... %0.4
+                             'WorstRejection',0.3,... %0.4
                              'Extrapolation',false);%,...
                              %'iter',300);  %off
                          
     moving_reg=rigidTransform(moving_rot,TR,TT);
-    
+    compareObj(moving_reg,fixed_centered);
     %Calculate the general transformation and translation
-    T=removeEps(TR*rotz(pi/4));
-    t=removeEps(-TR*rotz(pi/4)*cm+TT+cf);
+    T=TR*rotz(pi/4);
+    t=-TR*rotz(pi/4)*cm+TT+cf;
     
     %Use these to set up a homogeneous transformation.
     %Note: not really necessary
@@ -63,7 +57,6 @@
     stride=64; %Subsample
     fixedvertices =fixed_centered.v(1:stride:end,1:3);
     movingvertices=moving_reg.v(1:stride:end,1:3);
-    
     
     %R=rotz(pi/4);
     R=rotV(rot_axis,pi/4);
@@ -89,23 +82,34 @@
             reverseStr=reportToConsole('%d %% \n', reverseStr, round(100*j/length(fixedvertices)));
         end
     end
+    %% Normalize weight
     weight=weight./(sum(weight));
     disp('Done!')
-    %%
-    compareObj(obj_moving,obj_fixed);
-    n=length(c);
- 
-    cx=c(:,1);
-    cy=c(:,2);
-    cz=c(:,3);
+  %% 
+    c_true=[weight*c(:,1) weight*c(:,2) 0];
+    %c_true2=[mean(c,1) 0];
+    %% Let's see if the true rotation center makes any sense
     
-    rx=repmat(rot_axis(1),n,1);
-    ry=repmat(rot_axis(2),n,1);
-    rz=repmat(rot_axis(3),n,1);
+    step1=rigidTransform(objects_raw{4},eye(3,3),-c_true);
+    step2=rigidTransform(step1,rotz(-pi/4),c_true);
+    
+    compareObj(step2,objects_raw{5})
+    
+    %%
+%     compareObj(obj_moving,obj_fixed);
+%     n=length(c);
+%  
+%     cx=c(:,1);
+%     cy=c(:,2);
+%     cz=c(:,3);
+%     
+%     rx=repmat(rot_axis(1),n,1);
+%     ry=repmat(rot_axis(2),n,1);
+%     rz=repmat(rot_axis(3),n,1);
     %% 
-    hold on;
-    quiver3(cx,cy,cz,rx,ry,rz,100)
-    hold off
+%     hold on;
+%     quiver3(cx,cy,cz,rx,ry,rz,100)
+%     hold off
     
 %     %Show point cloud from z direction
 %     [counts,locs]=hist3(obj_fixed.v(:,1:2),[100 100]);

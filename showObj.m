@@ -1,7 +1,11 @@
-function showObj(object,C)
+function showObj(object,varargin)
     %Pure lazyness...
     if length(object)==1
-        pcshow(object.v,C);
+        if length(varargin)>0
+        pcshow(object.v,varargin{1});
+        else
+            pcshow(object.v);
+        end  
     else
         hold on
         for j=1:length(object)
