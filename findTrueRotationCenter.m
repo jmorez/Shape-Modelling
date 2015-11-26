@@ -2,12 +2,16 @@
     %This function will attempt to find the true center of rotation c by
     %using the knowledge of two point clouds that are know to succesfully
     %be registered to eachother
-    
+    dist_treshold=0.5;
     %Test case
     disp('Setting up test case...')
-    c_true=cm+normrnd(0,1,3,1);
+    %Generate a random displacement for the true (normally unknown)
+    %rotation center.
+    c_true=[-200 50 0];
     moving_test=rigidTransform(objects_raw{1},eye(3,3),-c_true);
+    %Rotate with 45 degrees around this center
     moving_test=rigidTransform(moving_test,rotz(pi/4),c_true);
+   %% 
     compareObj(objects_raw{1},moving_test);
     obj_moving=objects_raw{1}; obj_fixed=moving_test;
     disp('Done!')
@@ -17,14 +21,19 @@
     %Note: perhaps not put this in a function, it's confusing af...
     %[moving_reg,TR,TT,cm,cf,fixed_rot]=roughRegistration(obj_fixed,obj_moving);
     disp('Starting rough registration');
+    
     %Find centroids
     [moving_centered,cm]=centerObj(obj_moving);
     [fixed_centered,cf]=centerObj(obj_fixed);
     %Rotate 45 degrees to prepare for ICP
     moving_rot=rigidTransform(moving_centered,rotz(pi/4),[0 0 0]);
-    
+    %% 
+    %compareObj(rigidTransform(moving_rot,eye(3,3),[1 1 1]),fixed_centered);
+    compareObj(moving_rot,fixed_centered);
+
     %% Find ICP transformations
     disp('ICP')
+    stride=64;
     [TR,TT]=icp(fixed_centered.v(1:stride:end,1:3)',moving_rot.v(1:stride:end,1:3)', ...
                              'Matching','kDtree',...
                              'Normals',fixed_centered.vn(1:stride:end,1:3)',...
@@ -36,17 +45,17 @@
     moving_reg=rigidTransform(moving_rot,TR,TT);
     
     %Calculate the general transformation and translation
-    T=TR*rotz(pi/4);
-    t=-TR*rotz(pi/4)*cm+TT+cf;
+    T=removeEps(TR*rotz(pi/4));
+    t=removeEps(-TR*rotz(pi/4)*cm+TT+cf);
     
     %Use these to set up a homogeneous transformation.
     %Note: not really necessary
     Rh=[T t; 0 0 0 1];
-    
+    %% 
     %Find the eigenvector (~rotation axis direction). 
     [V,~]=eigs(Rh);
-    ch=V(:,3);  
-    rot_axis=real([ch(1) ch(2) ch(3)]); %We now know the direction of the rotation axis, now we can calculate the location
+    rot_axis=real(V(1:3,3)); %We now know the direction of the rotation axis, now we can calculate the location
+    %NOTE: is the third eigenvector always the axis we are looking for?
     disp('Done!');
     
     %% Find point pairs that are close enough (dist_treshold)
@@ -57,7 +66,7 @@
     
     
     %R=rotz(pi/4);
-    R=rotV([0 0 1],-pi/4);
+    R=rotV(rot_axis,pi/4);
     R=R(1:2,1:2);
     %R=R(1:2,1:2);
     c=[];
