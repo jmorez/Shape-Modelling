@@ -55,6 +55,7 @@ for m=1:length(input_dirs)
     figure(h)
     showObj(objects_rotated)
     title(input_dirs{m});
+    view(3)
     drawnow
 
     %% 5. ICP
