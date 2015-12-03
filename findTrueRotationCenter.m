@@ -25,6 +25,8 @@ function [c_true,true_rotation_axis]=findTrueRotationCenter(obj_moving,obj_fixed
     moving_rot=rigidTransform(moving_centered,rotz(-pi/4),[0 0 0]);
     
     %Find ICP transformations
+    %Idea: increase sample size by perturbing moving a bit and applying ICP
+    %again.
     disp('findTrueRotationCenter: applying ICP.')
     [TR,TT]=icp(fixed_centered.v(1:stride_icp:end,1:3)',moving_rot.v(1:stride_icp:end,1:3)', ...
                              'Matching','kDtree',...
@@ -88,15 +90,9 @@ function [c_true,true_rotation_axis]=findTrueRotationCenter(obj_moving,obj_fixed
     end
 	%Normalize weight, append the z-component to get a 3D vector
     weight=weight./(sum(weight));
-    c_true=[weight*cn(:,1) weight*cn(:,2) 0];
-    [0 0 0];
-    
-%     % Let's see if the true rotation center makes any sense
-%     
-%     step1=rigidTransform(objects_raw{4},eye(3,3),-c_true);
-%     step2=rigidTransform(step1,rotz(-pi/4),c_true);
-%     
-%     compareObj(step2,objects_raw{5})
+    c_true=[weight*cn(:,1) weight*cn(:,2) 0];  
 end
 
-%Written by Jan Morez Visielab, Antwerpen jan.morez@gmail.com
+%Written by Jan Morez 
+%Visielab, Antwerpen 
+%jan.morez@gmail.com

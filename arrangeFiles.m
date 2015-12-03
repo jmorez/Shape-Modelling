@@ -2,7 +2,7 @@
 %the subfolders for all .obj files and put them neatly in a folder called
 %'ordered'. 
 general_dir=backward2ForwardSlash('C:/Users/Jan Morez/Documents/Data/');
-sub_dirs={'117','90','85','96','157','125','124'};
+sub_dirs={'146  ','138','143'};
 for k=1:length(sub_dirs)
     searchdir=strcat(general_dir,sub_dirs{k});
     result=rdir([searchdir,'\**\*.obj']);

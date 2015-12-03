@@ -3,9 +3,8 @@ dist_treshold=5;
 
 %% Input Directories 
 base_dir='C:\Users\Jan Morez\Documents\Data\';
+input_dirs={'146'};
 
-%input_dirs={'113','129','131','133','134','137','141','145','149','150','152','154','100'};
-input_dirs={'90','96','85','157','125','124'};
 h=figure;
 
 %% Iterate over all directories
@@ -40,8 +39,7 @@ for m=1:length(input_dirs)
                                                     stride_icp, ...
                                                     stride_matching, ...
                                                     dist_treshold);
-    disp('Done!')
-    
+ 
     %% 4. Rough aligning by rotating around j*pi/4 
     disp('Rotating all objects around this center.')
     theta=pi/4;
@@ -52,6 +50,8 @@ for m=1:length(input_dirs)
                                             c_true);
     end  
     disp('Done!')
+    
+    %Show rough alignment result. 
     figure(h)
     showObj(objects_rotated)
     title(input_dirs{m});
@@ -63,20 +63,31 @@ for m=1:length(input_dirs)
     %Idee: volgorde van registratie aanpassen, altijd de kleinste dataset
     %registreren aan de grotere
     stride=8;
-    fprintf(1,'Starting fine registration with ICP. Subsampling with 1/%d th of all points. \n',stride);
+    %fprintf(1,'Starting fine registration with ICP. Subsampling with 1/%d th of all points. \n',stride);
 
     objects_registered=objects_rotated;
     for j=1:(n-1)
-        fixed =objects_registered{j+1}.v(1:stride:end,1:3)';
-        moving=objects_registered{j}.v(1:stride:end,1:3)';
+        K=min(length(objects_registered{j+1}),length(objects_registered{j}));
         
-        [TR,TT]=icp(fixed,moving,'Matching','kDtree',...
-                                 'Normals',objects_registered{j+1}.vn(1:stride:end,1:3)',...
-                                 'Minimize','plane',...
-                                 'WorstRejection',0.4,...
-                                 'Extrapolation',false);
+        fixedObj=downsampleObject(objects_registered{j+1},0.1);
+        movingObj=downsampleObject(objects_registered{j},0.1);
+        
+        fixed =fixedObj.v;
+        fixedN =fixedObj.vn;
+        moving=movingObj.v;
+        movingN=movingObj.vn;
+        
+%         [TR,TT]=icp(fixed,moving,'Matching','kDtree',...
+%                                  'Normals',objects_registered{j+1}.vn(1:stride:end,1:3)',...
+%                                  'Minimize','plane',...
+%                                  'WorstRejection',0.4,...
+%                                  'Extrapolation',false);
+       
+        [~,TR,TT]=icp_mod_point_plane_pyr(moving,movingN,fixed,fixedN,0.05, 100, 3, 1, 8, 0, 0);      
+        %TR=T(1:3,1:3); TT=T(1:3,4); 
+                             
         for k=1:j
-            objects_registered{k}=rigidTransform(objects_registered{k},TR,TT);
+            objects_registered{k}=rigidTransform(objects_registered{k},TR,-TT);
         end
         fprintf(1,'Registered %d out of %d. \n',j,n-1);
     end
