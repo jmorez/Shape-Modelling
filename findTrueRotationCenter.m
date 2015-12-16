@@ -1,8 +1,7 @@
-function [c_true,true_rotation_axis]=findTrueRotationCenter(obj_moving,obj_fixed,stride_icp,stride_matching,dist_treshold)
-%obj_moving=objects_raw{1}; obj_fixed=objects_raw{2}; dist_treshold=5;
-%stride_icp=8; stride_matching=64;
-
-    %This function will attempt to find the true center of rotation c
+function [c_true,true_rotation_axis,cn,c_truew]=findTrueRotationCenter(obj_moving,obj_fixed,stride_icp,stride_matching,dist_treshold)
+    %Idea: apply it twice, switching moving with fixed to get double the
+    %population
+    %This function will attempt to find the true center of rotation c    
     %assuming that obj_moving and obj_fixed can be registered relatively
     %easy. If this function spews nonsense, compare the overlap of
     %moving_reg and fixed_centered! It should be near perfect.
@@ -38,6 +37,8 @@ function [c_true,true_rotation_axis]=findTrueRotationCenter(obj_moving,obj_fixed
     %Apply the ICP transformation and calculate the total transformation
     %(i.e. including centering and the 45 degree-rotation).
     moving_registered=rigidTransform(moving_rot,TR,TT);
+    showObj({moving_registered,fixed_centered});
+    
     
     %Calculate the general transformation and translation
     T=TR*rotz(pi/4);
@@ -90,7 +91,8 @@ function [c_true,true_rotation_axis]=findTrueRotationCenter(obj_moving,obj_fixed
     end
 	%Normalize weight, append the z-component to get a 3D vector
     weight=weight./(sum(weight));
-    c_true=[weight*cn(:,1) weight*cn(:,2) 0];  
+    c_truew=[weight*cn(:,1) weight*cn(:,2) 0];  
+    c_true=[mean(cn(:,1)) mean(cn(:,2)) 0];  
 end
 
 %Written by Jan Morez 

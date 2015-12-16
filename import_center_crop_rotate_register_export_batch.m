@@ -3,7 +3,7 @@ dist_treshold=5;
 
 %% Input Directories 
 base_dir='C:\Users\Jan Morez\Documents\Data\';
-input_dirs={'146'};
+input_dirs={'151'};
 
 h=figure;
 
@@ -32,9 +32,9 @@ for m=1:length(input_dirs)
     
     %% 3. Find the true rotation center and use this for rough aligning.
     disp('Searching for true rotation center, this might take a while.')
-    stride_matching=64;
+    stride_matching=64; %Subsampling stride for matching pairs, as it uses KNN so it is quite expensive.
     stride_icp=8;
-    [c_true,rotation_axis]=findTrueRotationCenter(  objects_raw{1}, ...
+    [c_true,rotation_axis,cn,c_truew]=findTrueRotationCenter(objects_raw{1}, ...
                                                     objects_raw{2}, ...
                                                     stride_icp, ...
                                                     stride_matching, ...
