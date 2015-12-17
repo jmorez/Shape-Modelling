@@ -242,7 +242,7 @@ for level=numPyr-1:-1:0
         TT=TT+PoseX(:,4);
         
         % Transform the Points
-        Src_Moved=movepoints(PoseX, SrcPC); %Thanks for supplying movepoints.m, TOLGA you dick
+        Src_Moved=movepoints(PoseX, SrcPC); %Thanks for supplying movepoints.m
         fval = sum( (Src_Moved - SrcPC).^2, 2);
         fval = sqrt(sum(fval)./length(fval));
         
