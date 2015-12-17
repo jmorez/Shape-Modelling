@@ -37,7 +37,7 @@ function [c_true,true_rotation_axis,cn,c_truew]=findTrueRotationCenter(obj_movin
     %Apply the ICP transformation and calculate the total transformation
     %(i.e. including centering and the 45 degree-rotation).
     moving_registered=rigidTransform(moving_rot,TR,TT);
-    showObj({moving_registered,fixed_centered});
+    %showObj({moving_registered,fixed_centered});
     
     
     %Calculate the general transformation and translation
@@ -75,7 +75,8 @@ function [c_true,true_rotation_axis,cn,c_truew]=findTrueRotationCenter(obj_movin
     %Calculate the true center for all point pairs that are sufficiently
     %close to eachother. Keep the distance as a weight when averaging all
     %these values.
-    for j=1:min(length(fixedvertices),length(movingvertices))
+    numpoints=min(length(fixedvertices),length(movingvertices))-1;
+    for j=1:numpoints
         point=movingvertices(j,:);
         [idx,distance]=findNearestNeighbors(pointCloud(fixedvertices),point,1);
        %Given these points, calculate the center (see papers on my desk)...
@@ -85,8 +86,8 @@ function [c_true,true_rotation_axis,cn,c_truew]=findTrueRotationCenter(obj_movin
             n=n+1;
         end
         %Report progress
-        if(mod(j,round(length(fixedvertices)/100))==0)
-            reverseStr=reportToConsole('%d %% \n', reverseStr, round(100*j/length(fixedvertices)));
+        if(mod(j,round(numpoints/100))==0)
+            reverseStr=reportToConsole('%d %% \n', reverseStr, round(100*j/numpoints));
         end
     end
 	%Normalize weight, append the z-component to get a 3D vector

@@ -1,4 +1,4 @@
-    function showObjectsPrincipalComponents(objects)
+    function coeffs=showObjectsPrincipalComponents(objects)
     hold on;
     n=length(objects);
     

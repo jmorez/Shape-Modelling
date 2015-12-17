@@ -5,8 +5,6 @@ dist_treshold=5;
 base_dir='C:\Users\Jan Morez\Documents\Data\';
 input_dirs={'151'};
 
-h=figure;
-
 %% Iterate over all directories
 for m=1:length(input_dirs)
     %% 1. Import .grid files from <input_dir>. 
@@ -34,12 +32,18 @@ for m=1:length(input_dirs)
     disp('Searching for true rotation center, this might take a while.')
     stride_matching=64; %Subsampling stride for matching pairs, as it uses KNN so it is quite expensive.
     stride_icp=8;
-    [c_true,rotation_axis,cn,c_truew]=findTrueRotationCenter(objects_raw{1}, ...
+    [c_true1,rotation_axis,cn,c_truew]=findTrueRotationCenter(objects_raw{1}, ...
                                                     objects_raw{2}, ...
                                                     stride_icp, ...
                                                     stride_matching, ...
                                                     dist_treshold);
+    [c_true2,rotation_axis,cn,c_truew]=findTrueRotationCenter(objects_raw{2}, ...
+                                                    objects_raw{1}, ...
+                                                    stride_icp, ...
+                                                    stride_matching, ...
+                                                    dist_treshold);
  
+    c_true=0.5*(c_true1+c_true2);
     %% 4. Rough aligning by rotating around j*pi/4 
     disp('Rotating all objects around this center.')
     theta=pi/4;
@@ -52,12 +56,14 @@ for m=1:length(input_dirs)
     disp('Done!')
     
     %Show rough alignment result. 
-    figure(h)
+    figure
+    pause(1)
     showObj(objects_rotated)
     title(input_dirs{m});
     view(3)
     drawnow
-
+    pause(1)
+    
     %% 5. ICP
     %Subsampling factor
     %Idee: volgorde van registratie aanpassen, altijd de kleinste dataset
