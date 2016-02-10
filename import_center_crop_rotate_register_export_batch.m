@@ -1,6 +1,12 @@
 %% Parameters
 dist_treshold=5;
 
+% IDEA: 
+%Attach a weight to each transformation based on how well it registers each
+%point cloud, afterwards, calculate the average and apply this average if
+%it the ICP algorithm fails.
+%Problem: we need to include the rough alignment to  get a sensible result.
+
 %% Input Directories 
 base_dir='C:\Users\Jan Morez\Documents\Data\';
 input_dirs={'49','57','58','59','62','63','69','74','76','15','17','31','32'};
