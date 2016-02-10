@@ -78,7 +78,9 @@ function [c_true,true_rotation_axis,cn,c_truew]=findTrueRotationCenter(obj_movin
     numpoints=min(length(fixedvertices),length(movingvertices))-1;
     for j=1:numpoints
         point=movingvertices(j,:);
-        [idx,distance]=findNearestNeighbors(pointCloud(fixedvertices),point,1);
+        %The 1:(end-1) thing is to fix index trouble, no idea why
+        %actually...
+        [idx,distance]=findNearestNeighbors(pointCloud(fixedvertices(1:(end-1),:)),point,1);
        %Given these points, calculate the center (see papers on my desk)...
         if distance < dist_treshold
             cn(n,1:2)=(eye(2,2)-R)\(obj_fixed.v(stride_matching*idx,1:2)'-R*obj_moving.v(stride_matching*j,1:2)');

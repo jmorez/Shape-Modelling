@@ -3,7 +3,7 @@ dist_treshold=5;
 
 %% Input Directories 
 base_dir='C:\Users\Jan Morez\Documents\Data\';
-input_dirs={'151'};
+input_dirs={'49','57','58','59','62','63','69','74','76','15','17','31','32'};
 
 %% Iterate over all directories
 for m=1:length(input_dirs)
@@ -37,6 +37,7 @@ for m=1:length(input_dirs)
                                                     stride_icp, ...
                                                     stride_matching, ...
                                                     dist_treshold);
+                                                %%
     [c_true2,rotation_axis,cn,c_truew]=findTrueRotationCenter(objects_raw{2}, ...
                                                     objects_raw{1}, ...
                                                     stride_icp, ...
@@ -56,13 +57,11 @@ for m=1:length(input_dirs)
     disp('Done!')
     
     %Show rough alignment result. 
-    figure
-    pause(1)
-    showObj(objects_rotated)
-    title(input_dirs{m});
-    view(3)
-    drawnow
-    pause(1)
+%     pause(1)
+%     showObj(objects_rotated)
+%     title(input_dirs{m});
+%     view(3)
+%     pause(1)
     
     %% 5. ICP
     %Subsampling factor
@@ -83,17 +82,17 @@ for m=1:length(input_dirs)
         moving=movingObj.v;
         movingN=movingObj.vn;
         
-%         [TR,TT]=icp(fixed,moving,'Matching','kDtree',...
-%                                  'Normals',objects_registered{j+1}.vn(1:stride:end,1:3)',...
-%                                  'Minimize','plane',...
-%                                  'WorstRejection',0.4,...
-%                                  'Extrapolation',false);
+        [TR,TT]=icp(fixed',moving','Matching','kDtree',...
+                                 'Normals',objects_registered{j+1}.vn(1:stride:end,1:3)',...
+                                 'Minimize','plane',...
+                                 'WorstRejection',0.4,...
+                                 'Extrapolation',false);
        
-        [~,TR,TT]=icp_mod_point_plane_pyr(moving,movingN,fixed,fixedN,0.05, 100, 3, 1, 8, 0, 0);      
+        %[~,TR,TT]=icp_mod_point_plane_pyr(moving,movingN,fixed,fixedN,0.05, 100, 3, 1, 10, 0, 0);      
         %TR=T(1:3,1:3); TT=T(1:3,4); 
                              
         for k=1:j
-            objects_registered{k}=rigidTransform(objects_registered{k},TR,-TT);
+            objects_registered{k}=rigidTransform(objects_registered{k},TR,TT);
         end
         fprintf(1,'Registered %d out of %d. \n',j,n-1);
     end
