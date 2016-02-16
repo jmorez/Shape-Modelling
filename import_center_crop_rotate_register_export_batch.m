@@ -9,7 +9,7 @@ dist_treshold=5;
 
 %% Input Directories 
 base_dir='C:\Users\Jan Morez\Documents\Data\';
-input_dirs={'49','57','58','59','62','63','69','74','76','15','17','31','32'};
+input_dirs={'49'};
 
 %% Iterate over all directories
 for m=1:length(input_dirs)
