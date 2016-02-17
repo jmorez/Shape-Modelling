@@ -8,3 +8,4 @@ obj
 *.rar
 *.zip
 toolbox_graph
+extendedGaussianImageFE.m
