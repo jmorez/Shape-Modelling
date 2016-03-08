@@ -8,6 +8,7 @@ function c=findRotationCenterBruteForce(a_obj,b_obj,searchradius,resolution)
     %Hausdorff distance
     
     
+    
     rangex=linspace(min(cat(1,a_obj.v(:,1),b_obj.v(:,1))),max(cat(1,a_obj.v(:,1),b_obj.v(:,1))),resolution);
     rangey=linspace(min(cat(1,a_obj.v(:,2),b_obj.v(:,2))),max(cat(1,a_obj.v(:,2),b_obj.v(:,2))),resolution);
     
@@ -19,6 +20,8 @@ function c=findRotationCenterBruteForce(a_obj,b_obj,searchradius,resolution)
    
     axis image
 end
+
+
 
 function [hd D] = HausdorffDist(P,Q,lmf,dv)
     % Calculates the Hausdorff Distance between P and Q

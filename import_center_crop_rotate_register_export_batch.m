@@ -93,6 +93,8 @@ for m=1:length(input_dirs)
                                  'Minimize','plane',...
                                  'WorstRejection',0.4,...
                                  'Extrapolation',false);
+                             
+        
        
         %[~,TR,TT]=icp_mod_point_plane_pyr(moving,movingN,fixed,fixedN,0.05, 100, 3, 1, 10, 0, 0);      
         %TR=T(1:3,1:3); TT=T(1:3,4); 
