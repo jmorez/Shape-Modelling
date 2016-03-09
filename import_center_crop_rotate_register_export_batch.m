@@ -78,7 +78,7 @@ for m=1:length(input_dirs)
 
     objects_registered=objects_rotated;
     for j=1:(n-1)
-        K=min(length(objects_registered{j+1}),length(objects_registered{j}));
+        K=min(length(objects_registered{j+1}),length(objects_registered{j})); %WTF is this??
         
         fixedObj=downsampleObject(objects_registered{j+1},0.1);
         movingObj=downsampleObject(objects_registered{j},0.1);
