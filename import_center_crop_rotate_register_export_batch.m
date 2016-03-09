@@ -1,15 +1,13 @@
 %% Parameters
 dist_treshold=5;
 
-% IDEA: 
-%Attach a weight to each transformation based on how well it registers each
-%point cloud, afterwards, calculate the average and apply this average if
-%it the ICP algorithm fails.
-%Problem: we need to include the rough alignment to  get a sensible result.
-
 %% Input Directories 
 base_dir='C:\Users\Jan Morez\Documents\Data\';
-input_dirs={'49'};
+%input_dirs={'31','17','15'};
+input_dirs={'74','76','69','63','62','59','58','57','49','47','151','143', ... 
+            '138','146','125','124','157','85','96','90','109','104','101',...
+            '99','84','81','100','154','152','150','149','145','141','134',...
+            '137','133','103','131','129','113'};
 
 %% Iterate over all directories
 for m=1:length(input_dirs)
@@ -36,50 +34,42 @@ for m=1:length(input_dirs)
     
     %% 3. Find the true rotation center and use this for rough aligning.
     disp('Searching for true rotation center, this might take a while.')
-    stride_matching=64; %Subsampling stride for matching pairs, as it uses KNN so it is quite expensive.
+    stride_matching=64; %Different subsampling stride for matching pairs, as it uses KNN so it is quite expensive.
     stride_icp=8;
-    [c_true1,rotation_axis,cn,c_truew]=findTrueRotationCenter(objects_raw{1}, ...
+    c_true1=findTrueRotationCenter(objects_raw{1}, ...
                                                     objects_raw{2}, ...
                                                     stride_icp, ...
                                                     stride_matching, ...
                                                     dist_treshold);
-                                                %%
-    [c_true2,rotation_axis,cn,c_truew]=findTrueRotationCenter(objects_raw{2}, ...
+    %% 
+    c_true2=findTrueRotationCenter(objects_raw{2}, ...
                                                     objects_raw{1}, ...
                                                     stride_icp, ...
                                                     stride_matching, ...
                                                     dist_treshold);
  
     c_true=0.5*(c_true1+c_true2);
-    %% 4. Rough aligning by rotating around j*pi/4 
-    disp('Rotating all objects around this center.')
+    
+    %% Find a succesful rigid transform 
+    [R, T]=findRigidTransformation(c_true, objects_raw{2},objects_raw{1});
+    
+    %% 4. Apply it to the remaining objects, except the last one
+    disp('Rotating all objects using the first-to-second object transformation.')
     theta=pi/4;
-    for j=1:n
-        centered=rigidTransform(objects_raw{j}, eye(3,3), -c_true);
-        objects_rotated{j}=rigidTransform(  centered, ...
-                                            rotV([0 0 1],-theta*(n-j)), ... %This works better than the calculated axis...
-                                            c_true);
-    end  
-    disp('Done!')
-    
-    %Show rough alignment result. 
-%     pause(1)
-%     showObj(objects_rotated)
-%     title(input_dirs{m});
-%     view(3)
-%     pause(1)
-    
-    %% 5. ICP
-    %Subsampling factor
-    %Idee: volgorde van registratie aanpassen, altijd de kleinste dataset
-    %registreren aan de grotere
-    stride=8;
-    %fprintf(1,'Starting fine registration with ICP. Subsampling with 1/%d th of all points. \n',stride);
-
-    objects_registered=objects_rotated;
+    objects_roughly_aligned=objects_raw;
     for j=1:(n-1)
-        K=min(length(objects_registered{j+1}),length(objects_registered{j})); %WTF is this??
-        
+        for k=1:j
+            objects_roughly_aligned{k}=rigidTransform(objects_roughly_aligned{k},R,T);
+        end
+    end  
+
+    disp('Done!')
+   
+    %% 5. ICP
+    stride=8;
+
+    objects_registered=objects_roughly_aligned;
+    for j=1:(n-1)        
         fixedObj=downsampleObject(objects_registered{j+1},0.1);
         movingObj=downsampleObject(objects_registered{j},0.1);
         
@@ -93,41 +83,15 @@ for m=1:length(input_dirs)
                                  'Minimize','plane',...
                                  'WorstRejection',0.4,...
                                  'Extrapolation',false);
-                             
-        
-       
-        %[~,TR,TT]=icp_mod_point_plane_pyr(moving,movingN,fixed,fixedN,0.05, 100, 3, 1, 10, 0, 0);      
-        %TR=T(1:3,1:3); TT=T(1:3,4); 
-                             
+                                                        
         for k=1:j
             objects_registered{k}=rigidTransform(objects_registered{k},TR,TT);
         end
+        
         fprintf(1,'Registered %d out of %d. \n',j,n-1);
     end
     disp('Done!')
-    
-      %% 7. Non-rigid ICP (currently on hold)
-%     objects_nrregistered=objects_registered;
-%     for j=1:(n-1)
-%         fixed =objects_nrregistered{j+1};
-%         moving=objects_nrregistered{j};
-%         
-%         %Subsample/simplify with QSlim
-%         fixedV=fixed.v(1:stride:end,1:3);
-%         movingV=moving.v(1:stride:end,1:3);
-%         
-%         %Subsampling will affect indices, so we need to get the right
-%         %facedata
-%         
-%         
-%         %Now we can get the correct facedata.
-%         fixedF=quads2Triangles(fixedtrimmed.f);
-%         movingF=quads2Triangles(movingtrimmed.f);
-%             
-%         objects_nrregistered{j}=nonrigidICP(fixedV,movingV,fixedF,movingF,50,1);
-%         fprintf(1,'Registered %d out of %d. \n',j,n-1);
-%     end
-    
+
     %% 6. Export
 
     %Create output directory.
@@ -145,7 +109,7 @@ for m=1:length(input_dirs)
     %folder...
     alldata{m}=objects_raw;
 end
-%Written by Jan Morez, 22/10/2015
+%Written by Jan Morez, 22/10/2015-9/03/2016
 %Visielab, Antwerpen
 %jan.morez@gmail.com
 

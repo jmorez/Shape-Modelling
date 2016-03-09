@@ -1,8 +1,4 @@
-function [R, T] = findRigidTransformation(fixed, moving)
-    [c_true,~,~,~]=findTrueRotationCenter(fixed, moving, ...
-                                                    8, ...
-                                                    64, ...
-                                                    5);
+function [R, T] = findRigidTransformation(c_true, fixed, moving)
     %Our rough rotation is pi/4 exactly
     Rr=rotV([0 0 1],-pi/4);
     
@@ -29,5 +25,5 @@ function [R, T] = findRigidTransformation(fixed, moving)
     
     R=TR*Rr;
     T=TR*Rr*(-c_true)'+TR*c_true'+TT;
-    showObj(fixed, registered);    
+    %showObj(fixed, registered);    
 end
