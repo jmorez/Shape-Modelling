@@ -6,9 +6,9 @@ function object = importObj(varargin)
             
             %Remove zero padding.
             v=v(any(v,2),:);
-            vt=v(any(vt,2),:);
-            vn=v(any(vn,2),:);
-            f=f(any(f,2),:);
+            vt=vt(any(vt,2),:);
+            vn=vn(any(vn,2),:);
+            f=double(f(any(f,2),:));
             
             object=struct('v',v,'vt',vt,'vn',vn,'f',f);
     end

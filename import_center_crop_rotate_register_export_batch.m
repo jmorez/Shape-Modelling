@@ -12,6 +12,7 @@ input_dirs={'47','151','143', ...
 
 %% Iterate over all directories
 for m=1:length(input_dirs)
+    tic
     %% 1. Import .grid files from <input_dir>. 
     input_dir=strcat(base_dir,input_dirs{m});%'C:/Users/Jan Morez/Documents/Data/131';
     %outputdir=strcat('C:/Users/Guest/Desktop/RigideRegistratie/',input_dirs{m});
@@ -106,9 +107,7 @@ for m=1:length(input_dirs)
         %exportOBJ(objects_nrregistered{j},file);
         exportObj(objects_registered{j},file);
     end
-    %Something weird happens to this variable when opening a single
-    %folder...
-    alldata{m}=objects_raw;
+    toc
 end
 %Written by Jan Morez, 22/10/2015-9/03/2016
 %Visielab, Antwerpen
