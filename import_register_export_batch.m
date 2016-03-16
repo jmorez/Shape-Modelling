@@ -1,4 +1,5 @@
 %% Parameters
+%This is the threshold distance to find point pairs that can be used to calculate the true center.
 dist_treshold=5;
 
 %% Input Directories 
@@ -8,22 +9,24 @@ input_dirs={'47','151','143', ...
             '99','84','81','100','154','152','150','149','145','141','134',...
             '137','133','103','131','129','113'};
 
+%% Output directories
+outputdir=strcat('C:\Users\Guest\Desktop\RigideRegistratie\',input_dirs{m});
+
 %% Iterate over all directories
 for m=1:length(input_dirs)
-    tic
-    %% 1. Import .grid files from <input_dir>. 
-    input_dir=strcat(base_dir,input_dirs{m});%'C:/Users/Jan Morez/Documents/Data/131';
-    %outputdir=strcat('C:/Users/Guest/Desktop/RigideRegistratie/',input_dirs{m});
-    outputdir=strcat('C:\Users\Guest\Desktop\RigideRegistratie\',input_dirs{m});
-    fprintf(1,'Processing %s . \n',input_dir);
+    %% 1. Import .obj files from <input_dir>. 
+    input_dir=backward2ForwardSlash(strcat(base_dir,input_dirs{m}));%'C:/Users/Jan Morez/Documents/Data/131';
+    fprintf(1,'Processing directory %s  \n',input_dir);
 
     n=0; %File counter
     files=dir(input_dir);
-    disp('Importing files...')
+
     for j=1:length(files)
         [~,file,ext]=fileparts(files(j).name);
         if ~files(j).isdir && strcmp(ext,'.obj')
-            objects_raw{n+1}=importObj(strcat(input_dir,'/',files(j).name));
+            inputfile=strcat(input_dir,'/',files(j).name);
+            objects_raw{n+1}=importObj(inputfile);
+            fprintf(1,'importObj: imported %s. \n',inputfile);
             n=n+1;  
         end 
     end
@@ -33,9 +36,20 @@ for m=1:length(input_dirs)
     end
     
     %% 3. Find the true rotation center and use this for rough aligning.
+    %The true rotation center is found by assuming that the first and
+    %second object can be registered correctly. If that is the case, we can
+    %calculate the true center if we assume that the rotation was about the
+    %z-axis. We use the mean of two calculated centers by switching object
+    %1 and 2 around,because the ICP results might be slightly different or
+    %skewed.
+    
+    %Subsampling stride for matching pairs, as it uses KNN so it is quite
+    %expensive so this should be quite large.
+    stride_matching=64; 
+    %ICP subsampling stride
+    stride_icp=8;       
+    
     disp('Searching for true rotation center, this might take a while.')
-    stride_matching=64; %Different subsampling stride for matching pairs, as it uses KNN so it is quite expensive.
-    stride_icp=8;
     c_true1=findTrueRotationCenter(objects_raw{1}, ...
                                                     objects_raw{2}, ...
                                                     stride_icp, ...
@@ -47,13 +61,24 @@ for m=1:length(input_dirs)
                                                     stride_icp, ...
                                                     stride_matching, ...
                                                     dist_treshold);
- 
+    %Calculate the mean of the two centers
     c_true=0.5*(c_true1+c_true2);
     
-    %% Find a succesful rigid transform 
+    %% 4. Find a succesful rigid transform. 
+    %Here we assume that we can find a correct rigid transformation by
+    %centering the objects, rotating one by pi/4 and applying ICP.
+    %Afterwards we calculate the total transform (i.e. the combination of
+    %the centering, the pi/4 rotation and the ICP transform). 
     [R, T]=findRigidTransformation(c_true, objects_raw{2},objects_raw{1});
     
-    %% 4. Apply it to the remaining objects, except the last one
+    %% 5. Apply it to the remaining objects, except the last one.
+    %Since the person stands on a rotating platform and is rotated by pi/4
+    %increments about the same center, we can assume that the first
+    %succesful transform from step #4 also works for the rest. This is not
+    %ideal, but it is close enough so that we can apply a final ICP
+    %registration. If we don't perform this step, the objects will be too
+    %misaligned and ICP will not find a correct registration transform.
+    
     disp('Rotating all objects using the first-to-second object transformation.')
     theta=pi/4;
     objects_roughly_aligned=objects_raw;
@@ -65,9 +90,12 @@ for m=1:length(input_dirs)
 
     disp('Done!')
    
-    %% 5. ICP
-    stride=8;
-
+    %% 6. ICP
+    %All objects are roughly aligned, we can now directly apply ICP and
+    %expect a correct registration. 
+    disp('Applying ICP to the roughly aligned objects.')
+    icp_stride=8;
+    
     objects_registered=objects_roughly_aligned;
     for j=1:(n-1)        
         fixedObj=downsampleObject(objects_registered{j+1},0.1);
@@ -79,7 +107,7 @@ for m=1:length(input_dirs)
         movingN=movingObj.vn;
         
         [TR,TT]=icp(fixed',moving','Matching','kDtree',...
-                                 'Normals',objects_registered{j+1}.vn(1:stride:end,1:3)',...
+                                 'Normals',objects_registered{j+1}.vn(1:icp_stride:end,1:3)',...
                                  'Minimize','plane',...
                                  'WorstRejection',0.4,...
                                  'Extrapolation',false);
@@ -92,21 +120,21 @@ for m=1:length(input_dirs)
     end
     disp('Done!')
 
-    %% 6. Export
+    %% 6. Export the objects to some directory.
 
     %Create output directory.
     if ~exist(outputdir,'dir')
         fprintf(1,'"%s" does not exist. Directory has been created. %s. \n',outputdir);
         mkdir(outputdir);
     end
-
-    for j=1:n
-        file=strcat(outputdir,'/',num2str(j),'.obj');
-        %exportOBJ(objects_nrregistered{j},file);
+    
+    for j=1:n 
+        file=strcat(backward2ForwardSlash(outputdir),'/',num2str(j),'.obj');
         exportObj(file,objects_registered{j});
+        fprintf(1,'exportObj: exported to %s \n',file);
     end
-    toc
 end
+
 %Written by Jan Morez, 22/10/2015-9/03/2016
 %Visielab, Antwerpen
 %jan.morez@gmail.com
