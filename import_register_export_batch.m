@@ -103,7 +103,7 @@ for m=1:length(input_dirs)
     for j=1:n
         file=strcat(outputdir,'/',num2str(j),'.obj');
         %exportOBJ(objects_nrregistered{j},file);
-        exportObj(objects_registered{j},file);
+        exportObj(file,objects_registered{j});
     end
     toc
 end
