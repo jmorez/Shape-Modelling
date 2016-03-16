@@ -1,7 +1,7 @@
 function object = importObj(varargin)
     for k=1:length(varargin)
             objfile=backward2ForwardSlash(varargin{k});
-            fprintf(1,'Processing %s. \n',objfile);
+            fprintf(1,'importObj: processing %s. \n',objfile);
             [v,vt,vn,f]=importObjMex(objfile);
             
             %Remove zero padding.
