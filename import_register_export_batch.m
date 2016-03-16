@@ -4,20 +4,20 @@ dist_treshold=5;
 
 %% Input Directories 
 base_dir='C:\Users\Jan Morez\Documents\Data\';
-input_dirs={'47','151','143', ... 
-            '138','146','125','124','157','85','96','90','109','104','101',...
+input_dirs={'138','146','125','124','157','85','96','90','109','104','101',...
             '99','84','81','100','154','152','150','149','145','141','134',...
             '137','133','103','131','129','113'};
 
 %% Output directories
-outputdir=strcat('C:\Users\Guest\Desktop\RigideRegistratie\',input_dirs{m});
+outputbasedir='C:\Users\Guest\Desktop\RigideRegistratie\';
 
 %% Iterate over all directories
 for m=1:length(input_dirs)
+    tic
     %% 1. Import .obj files from <input_dir>. 
     input_dir=backward2ForwardSlash(strcat(base_dir,input_dirs{m}));%'C:/Users/Jan Morez/Documents/Data/131';
     fprintf(1,'Processing directory %s  \n',input_dir);
-
+    outputdir=strcat(outputbasedir,input_dirs{m});
     n=0; %File counter
     files=dir(input_dir);
 
@@ -133,6 +133,7 @@ for m=1:length(input_dirs)
         exportObj(file,objects_registered{j});
         fprintf(1,'exportObj: exported to %s \n',file);
     end
+    fprintf(1,'Registration took %f seconds. \n',toc);
 end
 
 %Written by Jan Morez, 22/10/2015-9/03/2016
