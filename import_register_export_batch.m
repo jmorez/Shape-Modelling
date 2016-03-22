@@ -4,9 +4,10 @@ dist_treshold=5;
 
 %% Input Directories 
 base_dir='C:\Users\Jan Morez\Documents\Data\';
-input_dirs={'138','146','125','124','157','85','96','90','109','104','101',...
-            '99','84','81','100','154','152','150','149','145','141','134',...
-            '137','133','103','131','129','113'};
+% input_dirs={'138','146','125','124','157','85','96','90','109','104','101',...
+%             '99','84','81','100','154','152','150','149','145','141','134',...
+%             '137','133','103','131','129','113'};
+        input_dirs={'138'};
 
 %% Output directories
 outputbasedir='C:\Users\Guest\Desktop\RigideRegistratie\';
@@ -15,7 +16,9 @@ outputbasedir='C:\Users\Guest\Desktop\RigideRegistratie\';
 for m=1:length(input_dirs)
     tic
     %% 1. Import .obj files from <input_dir>. 
-    input_dir=backward2ForwardSlash(strcat(base_dir,input_dirs{m}));%'C:/Users/Jan Morez/Documents/Data/131';
+    % If importObj is buggy/crashes, you can replace it with
+    % ./Obsolete/importObj_old.m
+    input_dir=backward2ForwardSlash(strcat(base_dir,input_dirs{m}));
     fprintf(1,'Processing directory %s  \n',input_dir);
     outputdir=strcat(outputbasedir,input_dirs{m});
     n=0; %File counter
@@ -41,11 +44,12 @@ for m=1:length(input_dirs)
     %calculate the true center if we assume that the rotation was about the
     %z-axis. We use the mean of two calculated centers by switching object
     %1 and 2 around,because the ICP results might be slightly different or
-    %skewed.
+    %skewed for each registration.
     
-    %Subsampling stride for matching pairs, as it uses KNN so it is quite
+    %Subsampling stride for matching pairs. It uses KNN so it is quite
     %expensive so this should be quite large.
     stride_matching=64; 
+    
     %ICP subsampling stride
     stride_icp=8;       
     
@@ -66,18 +70,20 @@ for m=1:length(input_dirs)
     
     %% 4. Find a succesful rigid transform. 
     %Here we assume that we can find a correct rigid transformation by
-    %centering the objects, rotating one by pi/4 and applying ICP.
-    %Afterwards we calculate the total transform (i.e. the combination of
-    %the centering, the pi/4 rotation and the ICP transform). 
+    %centering the first two objects, rotating one by pi/4 about the center
+    %we found in step #3 and applying ICP. Afterwards we calculate the
+    %total transform (i.e. the combination of the centering, the pi/4
+    %rotation and the ICP transform).
     [R, T]=findRigidTransformation(c_true, objects_raw{2},objects_raw{1});
     
-    %% 5. Apply it to the remaining objects, except the last one.
+    %% 5. Apply the total transform to the remaining objects, except the last one.
     %Since the person stands on a rotating platform and is rotated by pi/4
     %increments about the same center, we can assume that the first
     %succesful transform from step #4 also works for the rest. This is not
     %ideal, but it is close enough so that we can apply a final ICP
-    %registration. If we don't perform this step, the objects will be too
-    %misaligned and ICP will not find a correct registration transform.
+    %registration and avoid false minima. If we don't perform this step,
+    %the objects will be too misaligned and ICP will not find a correct
+    %registration transform.
     
     disp('Rotating all objects using the first-to-second object transformation.')
     theta=pi/4;
@@ -91,8 +97,8 @@ for m=1:length(input_dirs)
     disp('Done!')
    
     %% 6. ICP
-    %All objects are roughly aligned, we can now directly apply ICP and
-    %expect a correct registration. 
+    %All objects are now roughly aligned, we can now directly apply ICP and
+    %expect a correct registration in most cases.
     disp('Applying ICP to the roughly aligned objects.')
     icp_stride=8;
     
