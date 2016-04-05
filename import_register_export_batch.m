@@ -4,10 +4,7 @@ dist_treshold=5;
 
 %% Input Directories 
 base_dir='C:\Users\Jan Morez\Documents\Data\';
-% input_dirs={'138','146','125','124','157','85','96','90','109','104','101',...
-%             '99','84','81','100','154','152','150','149','145','141','134',...
-%             '137','133','103','131','129','113'};
-        input_dirs={'133'};
+input_dirs={'32','8','10','12','27','3','17','6','4'};
 
 %% Output directories
 outputbasedir='C:\Users\Guest\Desktop\RigideRegistratie\';
